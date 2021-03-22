@@ -1,0 +1,148 @@
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
+class Labor {
+  int _id;
+  String _type;
+  String _supervisor;
+  String _colaborator;
+  String _asegurator;
+   String _flowerType;
+  int _process;
+  String _muestras;
+  String _comments;
+  String _blocks;
+
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': _id,
+      'type': _type,
+      'supervisor': _supervisor,
+      'colaborator': _colaborator,
+      'asegurator': _asegurator,
+      'flowerType': _flowerType,
+      'process': _process,
+      'muestras': _muestras,
+      'comments': _comments,
+      'blocks': _blocks,
+
+    };
+  }
+
+  int get id => _id;
+
+  set id(int value) {
+    _id = value;
+  }
+
+  Future openDatabaseLocal() async{
+    return  openDatabase(
+      join(await getDatabasesPath(), 'dbTesdtssddddsssddddddssdsssds.db'),
+      onCreate: (db, version) {
+
+        return db.execute(
+          "CREATE TABLE labores(id INTEGER PRIMARY KEY, type TEXT, supervisor TEXT, colaborator TEXT, asegurator TEXT, blocks TEXT, flowerType TEXT, process INTEGER, muestras TEXT, comments TEXT)",
+        );
+      },
+
+      version: 1,
+    );
+  }
+
+  Future<void> save() async {
+    final Database db = await openDatabaseLocal();
+    print("aqui el map ${this.toMap()}");
+   await db.insert(
+      'labores',
+      this.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Labor>> findAll() async {
+    final Database db = await openDatabaseLocal();
+
+     final List<Map<String, dynamic>> maps = await db.rawQuery('select * from labores order by id desc');
+
+    print("todo los cosos  ${maps}");
+    return List.generate(maps.length, (i) {
+      Labor superv= Labor();
+      superv.id=maps[i]['id'];
+      superv.type=maps[i]['type'];
+      superv.supervisor=maps[i]['supervisor'];
+      superv.colaborator=maps[i]['colaborator'];
+      superv.asegurator=maps[i]['asegurator'];
+      superv.blocks=maps[i]['blocks'];
+      superv.flowerType=maps[i]['flowerType'];
+      superv.process=maps[i]['process'];
+      superv.muestras=maps[i]['muestras'];
+      superv.comments=maps[i]['comments'];
+
+      return  superv;
+    });
+  }
+
+  String get blocks => _blocks;
+
+  @override
+  String toString() {
+    return 'Labor{_id: $_id, _type: $_type, _supervisor: $_supervisor, _colaborator: $_colaborator, _asegurator: $_asegurator, _flowerType: $_flowerType, _process: $_process, _muestras: $_muestras, _comments: $_comments, _blocks: $_blocks}';
+  }
+
+  set blocks(String value) {
+    _blocks = value;
+  }
+
+  int get process => _process;
+
+  set process(int value) {
+    _process = value;
+  }
+
+  String get comments => _comments;
+
+
+  set comments(String value) {
+    _comments = value;
+  }
+
+  String get muestras => _muestras;
+
+  set muestras(String value) {
+    _muestras = value;
+  }
+
+
+  String get flowerType => _flowerType;
+
+  set flowerType(String value) {
+    _flowerType = value;
+  }
+
+
+
+  String get asegurator => _asegurator;
+
+  set asegurator(String value) {
+    _asegurator = value;
+  }
+
+  String get colaborator => _colaborator;
+
+  set colaborator(String value) {
+    _colaborator = value;
+  }
+
+  String get supervisor => _supervisor;
+
+  set supervisor(String value) {
+    _supervisor = value;
+  }
+
+  String get type => _type;
+
+  set type(String value) {
+    _type = value;
+  }
+}
