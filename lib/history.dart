@@ -822,7 +822,7 @@ class _HistoryPage extends State<HistoryPage>
                         Container(
                           child: Text("Corte",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
@@ -878,7 +878,7 @@ class _HistoryPage extends State<HistoryPage>
                         Container(
                           child: Text("Recepción de flores",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
@@ -933,7 +933,7 @@ class _HistoryPage extends State<HistoryPage>
                         Container(
                           child: Text("Manufactura ramo banda",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
@@ -989,7 +989,7 @@ class _HistoryPage extends State<HistoryPage>
                         Container(
                           child: Text("Empaque - Surtido Zuncho",
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
