@@ -813,7 +813,7 @@ class _HistoryPage extends State<HistoryPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          height: 70,
+                          height: 60,
                           child: Image.asset(
                             "assets/cut.png",
                             width: 60,
@@ -869,7 +869,7 @@ class _HistoryPage extends State<HistoryPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          height: 70,
+                          height: 60,
                           child: Image.asset(
                             "assets/reception.png",
                             width: 60,
@@ -924,7 +924,7 @@ class _HistoryPage extends State<HistoryPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          height: 70,
+                          height: 60,
                           child: Image.asset(
                             "assets/manufacture.png",
                             width: 60,
@@ -980,7 +980,7 @@ class _HistoryPage extends State<HistoryPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          height: 70,
+                          height: 60,
                           child: Image.asset(
                             "assets/truck.png",
                             width: 60,
