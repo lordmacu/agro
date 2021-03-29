@@ -73,7 +73,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoadedTables = await prefs.getBool("loadGeneral1s");
-    _onLoading();
+   // _onLoading();
     if (isLoadedTables == null) {
        loadData();
     } else {
