@@ -97,7 +97,7 @@ class _muestraDialogState extends State<muestraDialog> {
   Future initDb() async {
     sqfly = await Sqfly(
       /// database named
-      name: 'datacdd',
+      name: 'datacdsdd',
       // database version
       version: 2,
       logger: false,
