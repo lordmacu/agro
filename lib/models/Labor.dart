@@ -2,7 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Labor {
-  int _id;
+  int id;
   String _type;
   String _supervisor;
   String _colaborator;
@@ -12,11 +12,31 @@ class Labor {
   String _muestras;
   String _comments;
   String _blocks;
+  String _subtype;
+
+  String get subtype => _subtype;
+
+  set subtype(String value) {
+    _subtype = value;
+  }
+
+  Labor();
+  Labor.fromMap(Map<String, dynamic> map)
+      : id = map['id'],
+        _type = map['type'],
+        _asegurator = map['asegurator'],
+        _colaborator = map['colaborator'],
+        _flowerType = map['flowerType'],
+        _process = map['process'],
+        _muestras = map['muestras'],
+        _comments = map['comments'],
+        _blocks = map['blocks'],
+        _supervisor = map['supervisor'];
 
 
   Map<String, dynamic> toMap() {
     return {
-      'id': _id,
+      'id': id,
       'type': _type,
       'supervisor': _supervisor,
       'colaborator': _colaborator,
@@ -30,24 +50,18 @@ class Labor {
     };
   }
 
-  int get id => _id;
-
-  set id(int value) {
-    _id = value;
-  }
-
   Future openDatabaseLocal() async{
-    return  openDatabase(
-      join(await getDatabasesPath(), 'dbTesdtssddddsssddddddssdsssds.db'),
-      onCreate: (db, version) {
 
-        return db.execute(
-          "CREATE TABLE labores(id INTEGER PRIMARY KEY, type TEXT, supervisor TEXT, colaborator TEXT, asegurator TEXT, blocks TEXT, flowerType TEXT, process INTEGER, muestras TEXT, comments TEXT)",
-        );
-      },
 
-      version: 1,
-    );
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'dbAgrsoOness.db');
+
+    await deleteDatabase(path);
+    return  await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+          await db.execute(
+              'CREATE TABLE labores(id INTEGER PRIMARY KEY, type TEXT, supervisor TEXT, colaborator TEXT, asegurator TEXT, blocks TEXT, flowerType TEXT, process INTEGER, muestras TEXT, comments TEXT)');
+        });
   }
 
   Future<void> save() async {
@@ -83,12 +97,13 @@ class Labor {
     });
   }
 
-  String get blocks => _blocks;
-
   @override
   String toString() {
-    return 'Labor{_id: $_id, _type: $_type, _supervisor: $_supervisor, _colaborator: $_colaborator, _asegurator: $_asegurator, _flowerType: $_flowerType, _process: $_process, _muestras: $_muestras, _comments: $_comments, _blocks: $_blocks}';
+    return 'Labor{id: $id, _type: $_type, _supervisor: $_supervisor, _colaborator: $_colaborator, _asegurator: $_asegurator, _flowerType: $_flowerType, _process: $_process, _muestras: $_muestras, _comments: $_comments, _blocks: $_blocks}';
   }
+
+  String get blocks => _blocks;
+
 
   set blocks(String value) {
     _blocks = value;

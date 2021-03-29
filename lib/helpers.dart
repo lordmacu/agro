@@ -26,7 +26,6 @@ class Helpers{
   List<String> filterStringsAll(array,item){
     List<String> suggestionsLocal = [];
 
-    suggestionsLocal.add("Ramo conforme");
 
       array.forEach((userDetail) {
         if (this.removeDiacritics(userDetail).contains(this.removeDiacritics(item)))

@@ -4,16 +4,30 @@ import 'package:sqflite/sqflite.dart';
 class Comments {
     int _id;
     String _name;
-    int _processStep;
+    int _processId;
 
+
+    int get processId => _processId;
+
+  set processId(int value) {
+    _processId = value;
+  }
+
+    Comments();
 
   Map<String, dynamic> toMap() {
     return {
       'id': _id,
       'name': _name,
-      'process_step': _processStep,
+      'process_id': _processId,
     };
   }
+
+    Comments.fromMap(Map<String, dynamic> map)
+        : _id = map['id'],
+          _name = map['name'],
+          _processId = map['process_id'];
+
 
     int get id => _id;
 
@@ -22,18 +36,28 @@ class Comments {
   }
 
   Future openDatabaseLocal() async{
-    return  openDatabase(
-       join(await getDatabasesPath(), 'dbTesdtssddddsssddddddssdsssds.db'),
-       onCreate: (db, version) {
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'dbAgrsoOness.db');
 
-         return db.execute(
-          "CREATE TABLE comments(id INTEGER PRIMARY KEY, name TEXT, process_step INTEGER)",
-        );
-      },
-
-      version: 1,
-    );
+    await deleteDatabase(path);
+    return  await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+          await db.execute(
+              'CREATE TABLE comments(id INTEGER PRIMARY KEY, name TEXT, process_id INTEGER)');
+        });
   }
+
+    Future open() async{
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, 'dbAgrsoOness.db');
+
+
+      return  await openDatabase(path, version: 1,
+          onCreate: (Database db, int version) async {
+            await db.execute(
+                'CREATE TABLE comments(id INTEGER PRIMARY KEY, name TEXT, process_id INTEGER)');
+          });
+    }
 
   Future<void> save() async {
      final Database db = await openDatabaseLocal();
@@ -44,6 +68,25 @@ class Comments {
     );
   }
 
+
+
+    Future<void> saveusers(List<Comments> employs) async {
+
+      var database  = await openDatabaseLocal();
+
+      await database.transaction((txn) async {
+        var batch = txn.batch();
+        employs.forEach((element) {
+          batch.rawInsert("INSERT INTO comments(id, name, process_id) VALUES(${element.id}, '${element.name}', ${element.processId})");
+        });
+
+        await batch.commit();
+
+      });
+      await database.close();
+
+    }
+
   Future<List<Comments>> findAll() async {
      final Database db = await openDatabaseLocal();
 
@@ -53,7 +96,7 @@ class Comments {
        Comments superv= Comments();
        superv.id=maps[i]['id'];
        superv.name=maps[i]['name'];
-       superv.process_step=maps[i]['process_step'];
+       superv._processId=maps[i]['process_id'];
        return  superv;
      });
   }
@@ -67,7 +110,7 @@ class Comments {
         Comments superv= Comments();
         superv.id=maps[0]['id'];
         superv.name=maps[0]['name'];
-        superv.process_step=maps[0]['process_step'];
+        superv._processId=maps[0]['process_id'];
         return  superv;
       }
       return null;
@@ -75,27 +118,18 @@ class Comments {
     Future<List<Comments>> findOneByProcess(process) async {
       final Database db = await openDatabaseLocal();
 
-      final List<Map<String, dynamic>> maps = await db.rawQuery('select * from comments where process_step = ${process} order by name');
+      final List<Map<String, dynamic>> maps = await db.rawQuery('select * from comments where process_id = ${process} order by name');
 
       return List.generate(maps.length, (i) {
         Comments superv= Comments();
         superv.id=maps[i]['id'];
         superv.name=maps[i]['name'];
-        superv.process_step=maps[i]['process_step'];
+        superv._processId=maps[i]['process_step'];
         return  superv;
       });
     }
 
-    int get process_step => _processStep;
 
-  set process_step(int value) {
-    _processStep = value;
-  }
-
-  @override
-  String toString() {
-    return 'comments{_id: $_id, _name: $_name, _plantation: $_processStep}';
-  }
 
   String get name => _name;
 
