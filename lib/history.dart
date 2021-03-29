@@ -1,9 +1,16 @@
 import 'dart:convert';
 
+import 'package:agrotest/daos/CommentDao.dart';
+import 'package:agrotest/daos/ControlDao.dart';
+import 'package:agrotest/daos/EmployeeDao.dart';
+import 'package:agrotest/daos/FlowerDao.dart';
+import 'package:agrotest/daos/LaborDao.dart';
 import 'package:agrotest/dialogs/muestraDialog.dart';
 import 'package:agrotest/helpers.dart';
 import 'package:agrotest/models/Comments.dart';
+import 'package:agrotest/models/Controls.dart';
 import 'package:agrotest/models/Employs.dart';
+import 'package:agrotest/models/Flowers.dart';
 import 'package:agrotest/models/Labor.dart';
 import 'package:agrotest/models/SubTypes.dart';
 import 'package:agrotest/models/Supervisor.dart';
@@ -18,6 +25,8 @@ import 'package:flutter_tags/flutter_tags.dart';
 import 'package:group_button/group_button.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:toast/toast.dart';
+import 'package:agrotest/DB.dart';
+import 'package:sqfly/sqfly.dart';
 
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key key, this.title}) : super(key: key);
@@ -37,12 +46,14 @@ class HistoryPage extends StatefulWidget {
   _HistoryPage createState() => _HistoryPage();
 }
 
-class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage> {
+class _HistoryPage extends State<HistoryPage>
+    with AfterLayoutMixin<HistoryPage> {
   PanelController _panelController;
   int _counter = 0;
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible;
   bool isPanelOpen = false;
+  var sqfly = null;
 
   void _incrementCounter() {
     setState(() {
@@ -55,21 +66,39 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
     });
   }
 
-
-
+  int sede_id = 1;
   List<String> suggestions = [];
   List<String> selectedButtons = [];
   List<Labor> labores = [];
+  List<Labor> actualLabores = [];
 
+  Future initDb() async {
+    sqfly = await Sqfly(
+      /// database named
+      name: 'datacdd',
+      // database version
+      version: 2,
+      logger: false,
+
+      daos: [
+        EmployeeDao(),
+        LaborDao(),
+        FlowerDao(),
+        ControlDao(),
+        CommentDao(),
+        LaborDao()
+      ],
+    ).init();
+
+    getAllEmploys();
+  }
 
   @override
   void initState() {
     _passwordVisible = false;
     _panelController = PanelController();
     myFocusNode = FocusNode();
-    getAllEmploys();
-    getAllLabores();
-
+    initDb();
   }
 
   List<String> typesArray = [];
@@ -79,17 +108,16 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
   List<String> subtypesArray = [];
   List<String> commentsArray = [];
 
-  List<muestrasModel> muestrasArray=[];
-
+  List<muestrasModel> muestrasArray = [];
 
   int currentStep = 0;
-  int selectedItem=0;
-  int muestrasCount=0;
+  int selectedItem = 0;
+  int muestrasCount = 0;
 
-  String block="Bloque";
-  String flower="Tipo de flor";
+  String block = "Bloque";
+  String flower = "Tipo de flor";
 
-  int modificable=0;
+  int modificable = 0;
 
   final TextEditingController _supervisorTextEdition = TextEditingController();
   String _selectedType;
@@ -104,18 +132,14 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
   String _selectedAsegurador;
   FocusNode myFocusNode;
 
-
-  showPickerFlowers(BuildContext context) {
+  showPickerFlowers(BuildContext context) async {
+    List<Flowers> flowers =
+        await sqfly<FlowerDao>().where({'sede_id': '${sede_id}'}).toList();
 
     List<String> bloques = [];
-
-    bloques.add("Pompon");
-    bloques.add("Micro pompon");
-    bloques.add("Aster purple");
-    bloques.add("Aster white");
-    bloques.add("Solidage");
-    bloques.add("Snap dragon");
-
+    flowers.forEach((element) {
+      bloques.add("${element.name}");
+    });
 
     new Picker(
         cancelText: "Cancelar",
@@ -127,22 +151,33 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
           print(value.toString());
           print(picker.getSelectedValues());
           setState(() {
-            flower=picker.getSelectedValues()[0];
+            flower = picker.getSelectedValues()[0];
           });
-        }
-    ).showDialog(context);
+        }).showDialog(context);
   }
 
   showPickerBlocks(BuildContext context) {
-
     List<String> bloques = [];
 
-    for(var i =1 ; i<101; i++){
-      bloques.add("Bloque ${i}");
+    print("estqas es la labor ssss ${actualLabores}");
+
+    for (var i = 1; i < 101; i++) {
+      bool blockExist = false;
+
+      for (var b = 0; b < actualLabores.length; b++) {
+        print("estqas es la labor  ${actualLabores[b].blocks}");
+        if ("Bloque ${i}" == actualLabores[b].blocks) {
+          blockExist = true;
+        }
+      }
+
+      if (!blockExist) {
+        bloques.add("Bloque ${i}");
+      }
     }
 
     new Picker(
-      cancelText: "Cancelar",
+        cancelText: "Cancelar",
         confirmText: "Confirmar",
         adapter: PickerDataAdapter<String>(pickerdata: bloques),
         hideHeader: true,
@@ -151,10 +186,9 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
           print(value.toString());
           print(picker.getSelectedValues());
           setState(() {
-            block=picker.getSelectedValues()[0];
+            block = picker.getSelectedValues()[0];
           });
-        }
-    ).showDialog(context);
+        }).showDialog(context);
   }
 
   Widget StepOne() {
@@ -169,7 +203,6 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
             key: _formKey,
             child: Column(
               children: [
-
                 Container(
                   margin: EdgeInsets.only(bottom: 15),
                   child: TypeAheadFormField(
@@ -332,37 +365,41 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      selectedItem<3 ? RaisedButton(
-                        color: block=="Bloque" ? Colors.grey : Color(0xff85a335),
-                        onPressed: () {
-
-
-                          showPickerBlocks(context);
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0)),
-                        child: Text(
-                          "${block}",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ) : Container(),
-                      selectedItem<3 ? RaisedButton(
-                        color: flower=="Tipo de flor" ? Colors.grey : Color(0xff85a335),
-                        onPressed: () {
-                          showPickerFlowers(context);
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0)),
-                        child: Text(
-                          "${flower}",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ): Container()
-
+                      selectedItem < 3
+                          ? RaisedButton(
+                              color: block == "Bloque"
+                                  ? Colors.grey
+                                  : Color(0xff85a335),
+                              onPressed: () {
+                                showPickerBlocks(context);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0)),
+                              child: Text(
+                                "${block}",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                          : Container(),
+                      selectedItem < 3
+                          ? RaisedButton(
+                              color: flower == "Tipo de flor"
+                                  ? Colors.grey
+                                  : Color(0xff85a335),
+                              onPressed: () async {
+                                await showPickerFlowers(context);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0)),
+                              child: Text(
+                                "${flower}",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                          : Container()
                     ],
                   ),
                 ),
-
               ],
             ),
           ),
@@ -372,7 +409,7 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                 width: 40,
+                width: 40,
                 child: MaterialButton(
                   onPressed: () {
                     goback();
@@ -390,13 +427,14 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
               Container(
                 child: RaisedButton(
                   color: Color(0xffFFB74D),
-
-                  onPressed: flower!="Tipo de flor" ? () {
-                    if (this._formKey.currentState.validate()) {
-                      this._formKey.currentState.save();
-                      gonext();
-                    }
-                  }: null,
+                  onPressed: flower != "Tipo de flor"
+                      ? () {
+                          if (this._formKey.currentState.validate()) {
+                            this._formKey.currentState.save();
+                            gonext();
+                          }
+                        }
+                      : null,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)),
                   child: Text(
@@ -412,54 +450,62 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
     );
   }
 
-
-  goback(){
-    if(currentStep>0){
+  goback() {
+    if (currentStep > 0) {
       setState(() {
-        currentStep=currentStep-1;
+        currentStep = currentStep - 1;
       });
     }
   }
 
-  gonext(){
+  gonext() {
     setState(() {
-      currentStep=currentStep+1;
+      currentStep = currentStep + 1;
     });
 
     print("asdfsd fa ${currentStep}");
   }
 
-  showDialogMuestra(int muestra){
+  showDialogMuestra(int muestra) {
+    SelectedTypes = [];
+    subtypesArray = [];
 
-    SelectedTypes=[];
-    subtypesArray=[];
+    print("aquiiii ${selectedItem}");
 
-     Alert(
-
+    Alert(
         context: context,
-        title: "Muestra ${muestra+1}",
+        title: "Muestra ${muestra + 1}",
+        style: AlertStyle(
+          titleStyle: TextStyle(height: 0),
+          alertPadding: EdgeInsets.all(0),
 
-        content: muestraDialog(typesArray: typesArray,subTypesString: muestrasArray[muestra].subtypes,selectedType:muestrasArray[muestra].type ,exportSubtypes: (List<String> val,type){
-          setState(() {
-            muestrasArray[muestra].name="Muestra ${muestra}";
-            muestrasArray[muestra].type=type;
-            muestrasArray[muestra].subtypes=val;
-          });
+        ),
+        content: muestraDialog(
+          flower: flower,
+          sede_id: sede_id,
+          selectedItem: selectedItem,
+          typesArray: typesArray,
+          subTypesString: muestrasArray[muestra].subtypes,
+          selectedType: muestrasArray[muestra].type,
+          exportSubtypes: (List<String> val, type) {
+            setState(() {
+              muestrasArray[muestra].name = "Muestra ${muestra}";
+              muestrasArray[muestra].type = type;
+              muestrasArray[muestra].subtypes = val;
+            });
 
-          Navigator.pop(context);
-        },),
-        buttons: [
-
-        ]).show();
+            Navigator.pop(context);
+          },
+        ),
+        buttons: []).show();
   }
 
-  List<Widget> showItemsControl(){
+  List<Widget> showItemsControl() {
     List<Widget> muestras = [];
 
-
-    for(var i =0 ; i < muestrasCount ; i++){
+    for (var i = 0; i < muestrasCount; i++) {
       muestras.add(GestureDetector(
-        onTap: (){
+        onTap: () {
           this._typeTextEdition.text = "";
 
           this._selectedType = "";
@@ -470,50 +516,63 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
             Container(
               width: double.infinity,
               margin: EdgeInsets.all(5),
-
               decoration: BoxDecoration(
-                  border: Border.all(color:  Colors.grey),
+                  border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.all(Radius.circular(20))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text("Muestra"),
-                  Text("${i+1}",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
+                  Text(
+                    "${i + 1}",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                  ),
                 ],
               ),
             ),
-            muestrasArray[i]!=null ?  Container(
-              child: muestrasArray[i].type=="Ramo conforme" ? Icon(Icons.check_circle,color: Color(0xff85a335),) : null,
-            ) : null
+            muestrasArray[i] != null
+                ? Container(
+                    child: muestrasArray[i].type == "Ramo conforme"
+                        ? Icon(
+                            Icons.check_circle,
+                            color: Color(0xff85a335),
+                          )
+                        : null,
+                  )
+                : null
           ],
         ),
       ));
     }
 
     muestras.add(GestureDetector(
-      onTap: (){
+      onTap: () {
         setState(() {
-          muestrasCount=muestrasCount+1;
-          muestrasModel muestra= muestrasModel();
-          muestra.type="";
-          muestra.subtypes=[];
+          muestrasCount = muestrasCount + 1;
+          muestrasModel muestra = muestrasModel();
+          muestra.type = "";
+          muestra.subtypes = [];
           muestrasArray.add(muestra);
         });
       },
       child: Container(
         margin: EdgeInsets.all(5),
-
         decoration: BoxDecoration(
-
             border: Border.all(color: Color(0xff85a335)),
             borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Agregar",style: TextStyle(color: Color(0xff85a335)),),
-            Icon(Icons.add,color: Color(0xff85a335),)
+            Text(
+              "Agregar",
+              style: TextStyle(color: Color(0xff85a335)),
+            ),
+            Icon(
+              Icons.add,
+              color: Color(0xff85a335),
+            )
           ],
         ),
       ),
@@ -533,7 +592,10 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
             children: [
               Container(
                 margin: EdgeInsets.only(bottom: 20),
-                child: Text("Comentarios",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                child: Text(
+                  "Comentarios",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
               ),
               Container(
                 child: GroupButton(
@@ -541,25 +603,17 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                   spacing: 10,
                   selectedButtons: selectedButtons,
                   onSelected: (index, isSelected) {
+                    final person = selectedComments
+                        .firstWhere((element) => element == index, orElse: () {
+                      return null;
+                    });
 
-
-                    final person =
-                    selectedComments.firstWhere((element) =>
-                    element == index,
-                        orElse: () {
-                          return null;
-                        });
-
-                    if(person!=null){
+                    if (person != null) {
                       selectedComments.remove(person);
-                    }else{
+                    } else {
                       selectedComments.add(index);
-
                     }
                     FocusScope.of(context).requestFocus(FocusNode());
-
-
-
                   },
                   buttons: commentsArray,
                 ),
@@ -591,38 +645,35 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                 child: RaisedButton(
                   color: Color(0xffFFB74D),
                   onPressed: () {
+                    Labor labor = Labor();
+                    labor.comments = jsonEncode(selectedComments);
+                    labor.muestras = jsonEncode(muestrasArray);
+                    labor.flowerType = flower;
+                    labor.blocks = block;
+                    labor.asegurator = _selectedAsegurador;
+                    labor.colaborator = _selectedColaborador;
+                    labor.supervisor = _selectedSupervisor;
+                    labor.process = selectedItem;
 
+                    sqfly<LaborDao>().create(labor); // insertAll
 
-
-                    Labor labor= Labor();
-                    labor.comments=jsonEncode(selectedComments);
-                    labor.muestras=jsonEncode(muestrasArray);
-                    labor.flowerType=flower;
-                    labor.blocks=block;
-                     labor.asegurator=_selectedAsegurador;
-                    labor.colaborator=_selectedColaborador;
-                    labor.supervisor=_selectedSupervisor;
-                    labor.process=selectedItem;
-                    labor.save();
                     getAllLabores();
 
-
                     setState(() {
-                       _selectedSupervisor=null;
-                      _selectedColaborador=null;
-                      _selectedAsegurador=null;
-                      block="Bloque";
-                      flower="Tipo de flor";
-                      muestrasArray=[];
-                      selectedComments=[];
-                       selectedButtons=[];
-                        currentStep = 0;
-                        selectedItem=0;
-                        muestrasCount=0;
+                      _selectedSupervisor = null;
+                      _selectedColaborador = null;
+                      _selectedAsegurador = null;
+                      block = "Bloque";
+                      flower = "Tipo de flor";
+                      muestrasArray = [];
+                      selectedComments = [];
+                      selectedButtons = [];
+                      currentStep = 0;
+                      selectedItem = 0;
+                      muestrasCount = 0;
                     });
 
                     _panelController.close();
-
 
                     //print("selected ${selectedItem}  _selectedSupervisor ${_selectedSupervisor}  _selectedColaborador ${_selectedColaborador} _selectedAsegurador ${_selectedAsegurador}  block ${block}  flower ${flower}  muestrasArray ${ jsonEncode(muestrasArray)} selectedComments ${selectedComments}");
                   },
@@ -651,13 +702,14 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
           children: [
             Container(
               margin: EdgeInsets.only(bottom: 20),
-              child: Text("Items de Control",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+              child: Text(
+                "Items de Control",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
             ),
             Container(
               child: Expanded(
-                child:  GridView.count(
-
-
+                child: GridView.count(
                   // Create a grid with 2 columns. If you change the scrollDirection to
                   // horizontal, this produces 2 rows.
                   crossAxisCount: 4,
@@ -676,8 +728,7 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                 width: 40,
                 child: MaterialButton(
                   onPressed: () {
-
-                   goback();
+                    goback();
                   },
                   textColor: Colors.white,
                   child: Icon(
@@ -693,19 +744,19 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                 child: RaisedButton(
                   color: Color(0xffFFB74D),
                   onPressed: () {
-                    int canNext=0;
+                    int canNext = 0;
                     muestrasArray.forEach((element) {
-                       if(element.type.length==0){
-                        canNext=canNext+1;
+                      if (element.type.length == 0) {
+                        canNext = canNext + 1;
                       }
                     });
-                     if(canNext==0){
-                       gonext();
-                    }else{
-                       Toast.show("Por favor complete las muestras", context, duration: Toast.LENGTH_LONG, gravity:  Toast.BOTTOM);
-
-                     }
-                   //
+                    if (canNext == 0) {
+                      gonext();
+                    } else {
+                      Toast.show("Por favor complete las muestras", context,
+                          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                    }
+                    //
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)),
@@ -722,7 +773,6 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
     );
   }
 
-
   Widget StepTwo() {
     return Container(
       padding: EdgeInsets.only(left: 20, bottom: 20, right: 30),
@@ -736,13 +786,14 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
           // Generate 100 widgets that display their index in the List.
           children: [
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 setState(() {
-                  selectedItem=1;
-                  currentStep=1;
+                  selectedItem = 1;
+                  currentStep = 1;
                 });
                 getAllTypes();
 
+                findLaboresByProcess();
               },
               child: Stack(
                 fit: StackFit.expand,
@@ -751,7 +802,11 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                     margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        border: Border.all(color: selectedItem==1 ? Color(0xffFFB74D) : Colors.grey,width: selectedItem==1 ? 3 : 1),
+                        border: Border.all(
+                            color: selectedItem == 1
+                                ? Color(0xffFFB74D)
+                                : Colors.grey,
+                            width: selectedItem == 1 ? 3 : 1),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -774,28 +829,28 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                       ],
                     ),
                   ),
-                  selectedItem==1 ?  Positioned(
-                      right: 20,
-                      top: 10,
-                      child: Container(
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Color(0xffFFB74D),
-                        ),
-                      )) : Container()
+                  selectedItem == 1
+                      ? Positioned(
+                          right: 20,
+                          top: 10,
+                          child: Container(
+                            child: Icon(
+                              Icons.check_circle,
+                              color: Color(0xffFFB74D),
+                            ),
+                          ))
+                      : Container()
                 ],
               ),
             ),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 setState(() {
-                  selectedItem=2;
-                  currentStep=1;
-
+                  selectedItem = 2;
+                  currentStep = 1;
                 });
 
                 getAllTypes();
-
               },
               child: Stack(
                 children: [
@@ -803,7 +858,11 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                     margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        border: Border.all(color: selectedItem==2 ? Color(0xffFFB74D) : Colors.grey,width: selectedItem==2 ? 3 : 1),
+                        border: Border.all(
+                            color: selectedItem == 2
+                                ? Color(0xffFFB74D)
+                                : Colors.grey,
+                            width: selectedItem == 2 ? 3 : 1),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -826,27 +885,27 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                       ],
                     ),
                   ),
-                  selectedItem==2 ?  Positioned(
-                      right: 20,
-                      top: 10,
-                      child: Container(
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Color(0xffFFB74D),
-                        ),
-                      )) : Container()
+                  selectedItem == 2
+                      ? Positioned(
+                          right: 20,
+                          top: 10,
+                          child: Container(
+                            child: Icon(
+                              Icons.check_circle,
+                              color: Color(0xffFFB74D),
+                            ),
+                          ))
+                      : Container()
                 ],
               ),
             ),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 setState(() {
-                  selectedItem=3;
-                  currentStep=1;
-
+                  selectedItem = 3;
+                  currentStep = 1;
                 });
                 getAllTypes();
-
               },
               child: Stack(
                 children: [
@@ -854,7 +913,11 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                     margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        border: Border.all(color: selectedItem==3 ? Color(0xffFFB74D) : Colors.grey,width: selectedItem==3? 3 : 1),
+                        border: Border.all(
+                            color: selectedItem == 3
+                                ? Color(0xffFFB74D)
+                                : Colors.grey,
+                            width: selectedItem == 3 ? 3 : 1),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -877,27 +940,25 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                       ],
                     ),
                   ),
-                  selectedItem==3 ?  Positioned(
-                      right: 20,
-                      top: 10,
-                      child: Container(
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Color(0xffFFB74D),
-                        ),
-                      )) : Container()
+                  selectedItem == 3
+                      ? Positioned(
+                          right: 20,
+                          top: 10,
+                          child: Container(
+                            child: Icon(
+                              Icons.check_circle,
+                              color: Color(0xffFFB74D),
+                            ),
+                          ))
+                      : Container()
                 ],
               ),
             ),
             GestureDetector(
-              onTap: () async{
-
-
-
+              onTap: () async {
                 setState(() {
-                  selectedItem=4;
-                  currentStep=1;
-
+                  selectedItem = 4;
+                  currentStep = 1;
                 });
 
                 getAllTypes();
@@ -908,7 +969,11 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                     margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        border: Border.all(color: selectedItem==4 ? Color(0xffFFB74D) : Colors.grey,width: selectedItem==4 ? 3 : 1),
+                        border: Border.all(
+                            color: selectedItem == 4
+                                ? Color(0xffFFB74D)
+                                : Colors.grey,
+                            width: selectedItem == 4 ? 3 : 1),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -931,21 +996,20 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                       ],
                     ),
                   ),
-                  selectedItem==4 ?  Positioned(
-                      right: 20,
-                      top: 10,
-                      child: Container(
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Color(0xffFFB74D),
-                        ),
-                      )) : Container()
+                  selectedItem == 4
+                      ? Positioned(
+                          right: 20,
+                          top: 10,
+                          child: Container(
+                            child: Icon(
+                              Icons.check_circle,
+                              color: Color(0xffFFB74D),
+                            ),
+                          ))
+                      : Container()
                 ],
               ),
             ),
-
-
-
           ],
         ),
       ),
@@ -966,22 +1030,20 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
     if (currentStep == 3) {
       return StepFour();
     }
-
-
   }
 
-  getLabor(labor){
-    if(labor==1){
-      return  "Corte";
+  getLabor(labor) {
+    if (labor == 1) {
+      return "Corte";
     }
-    if(labor==2){
-      return  "Recepción de flores";
+    if (labor == 2) {
+      return "Recepción de flores";
     }
-    if(labor==3){
-      return  "Manufactura ramo banda";
+    if (labor == 3) {
+      return "Manufactura ramo banda";
     }
-    if(labor==4){
-      return  "Empaque - Surtido Zuncho";
+    if (labor == 4) {
+      return "Empaque - Surtido Zuncho";
     }
   }
 
@@ -1048,7 +1110,7 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                                   topRight: Radius.circular(30)),
                               color: Colors.white,
                             ),
-                            child: Container(
+                            child: labores.length > 0  ? Container(
                               child: ListView.builder(
                                   itemCount: labores.length,
                                   itemBuilder: (BuildContext ctxt, int index) {
@@ -1080,74 +1142,236 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                                             top: 0,
                                           ),
                                           Positioned(
-                                            child: Icon(
-                                              Icons.delete,
-                                              color:
-                                                  Colors.grey.withOpacity(0.8),
+                                            child: GestureDetector(
+                                              child: Icon(
+                                                Icons.delete,
+                                                color: Colors.grey
+                                                    .withOpacity(0.8),
+                                              ),
+                                              onTap: () async {
+                                                await sqfly<LaborDao>()
+                                                    .deleteLabor(
+                                                        labores[index].id);
+
+                                                getAllLabores();
+                                              },
                                             ),
                                             bottom: 10,
                                             right: 10,
                                           ),
-                                          Container(
-                                            padding: EdgeInsets.only(
-                                                top: 20, bottom: 20),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  child: Image.asset(
-                                                    "assets/hoja.png",
-                                                    width: 30,
+                                          GestureDetector(
+
+                                            child: Container(
+                                              padding: EdgeInsets.only(
+                                                  top: 20, bottom: 20),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    child: Image.asset(
+                                                      "assets/hoja.png",
+                                                      width: 30,
+                                                    ),
+                                                    padding: EdgeInsets.only(
+                                                        left: 20, right: 20),
                                                   ),
-                                                  padding: EdgeInsets.only(
-                                                      left: 20, right: 20),
-                                                ),
-                                                Container(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        child: Text(
-                                                          "Labor:${getLabor(labores[index].process)}",
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                  Container(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        Container(
+                                                          child: Text(
+                                                            "Labor:${getLabor(labores[index].process)}",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                          ),
+                                                          margin: EdgeInsets.only(
+                                                              bottom: 5),
                                                         ),
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 5),
+                                                        Container(
+                                                          child: Text(
+                                                            "${labores[index].blocks}",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                          ),
+                                                          margin: EdgeInsets.only(
+                                                              bottom: 5),
+                                                        ),
+                                                        Container(
+                                                          child: Text(
+                                                            "10 de Marzo de 2021",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w400,
+                                                                color:
+                                                                Colors.grey,
+                                                                fontSize: 12),
+                                                          ),
+                                                          margin: EdgeInsets.only(
+                                                              bottom: 5),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            onTap: () async{
+                                              var muestraDecode=jsonDecode(labores[index].muestras);
+                                              String subtypes=muestraDecode[0]["subtypes"].join(", ");
+                                              String type=muestraDecode[0]["type"];
+                                              List commentConverted=jsonDecode(labores[index].comments);
+
+                                              setState(() {
+                                                selectedItem=labores[index].process;
+                                              });
+
+                                              await getAllComments();
+                                              var comments=[];
+                                              for(var c=0 ; c<commentsArray.length; c++){
+                                                for(var e=0; e<commentConverted.length; e++){
+                                                    if(commentConverted[e]==c){
+                                                        comments.add(commentsArray[c]);
+                                                    }
+                                                }
+                                              }
+                                                 print("estos son los comentarios ${comments}");
+                                              String commentsString= comments.join(", ");
+
+                                              Alert(
+                                                  context: context,
+                                                  title: "${getLabor(labores[index].process)}",
+                                                  content: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                                                    children: <Widget>[
+                                                       Container(
+
+                                                         child: Column(
+                                                           mainAxisAlignment: MainAxisAlignment.start,
+                                                           crossAxisAlignment: CrossAxisAlignment.start,
+                                                           children: [
+                                                             Text("Supervidor",style: TextStyle(fontSize: 16)),
+                                                            Container(
+
+                                                              child:  Text("${labores[index].supervisor}",style: TextStyle(color: Colors.grey,fontSize: 15),),
+                                                              margin: EdgeInsets.only(top: 5),
+                                                            )
+                                                             ,Divider(
+                                                               color: Colors.grey,
+                                                             )
+                                                           ],
+                                                         ),
+                                                         margin: EdgeInsets.only(bottom: 5),
+                                                       ),
+                                                      Container(
+
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("Colaborador",style: TextStyle(fontSize: 16)),
+                                                            Container(
+
+                                                              child:  Text("${labores[index].colaborator}",style: TextStyle(color: Colors.grey,fontSize: 15),),
+                                                              margin: EdgeInsets.only(top: 5),
+                                                            )
+                                                            ,Divider(
+                                                              color: Colors.grey,
+                                                            )
+                                                          ],
+                                                        ),
+                                                        margin: EdgeInsets.only(bottom: 5),
                                                       ),
                                                       Container(
-                                                        child: Text(
-                                                          "${labores[index].blocks}",
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
+
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("Asegurador",style: TextStyle(fontSize: 16)),
+                                                            Container(
+
+                                                              child:  Text("${labores[index].asegurator}",style: TextStyle(color: Colors.grey,fontSize: 15),),
+                                                              margin: EdgeInsets.only(top: 5),
+                                                            )
+                                                            ,Divider(
+                                                              color: Colors.grey,
+                                                            )
+                                                          ],
                                                         ),
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 5),
+                                                        margin: EdgeInsets.only(bottom: 5),
                                                       ),
                                                       Container(
-                                                        child: Text(
-                                                          "10 de Marzo de 2021",
-                                                          style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color:
-                                                                  Colors.grey,
-                                                              fontSize: 12),
+
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("Item de control",style: TextStyle(fontSize: 16)),
+                                                            Container(
+
+                                                              child:  Text("${type}",style: TextStyle(color: Colors.grey,fontSize: 15),),
+                                                              margin: EdgeInsets.only(top: 5),
+                                                            )
+                                                            ,Divider(
+                                                              color: Colors.grey,
+                                                            )
+                                                          ],
                                                         ),
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 5),
+                                                        margin: EdgeInsets.only(bottom: 5),
+                                                      ),
+                                                      Container(
+
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("${labores[index].blocks}",style: TextStyle(fontSize: 16)),
+                                                            Container(
+
+                                                              child:  Text("${subtypes}",style: TextStyle(color: Colors.grey,fontSize: 15),),
+                                                              margin: EdgeInsets.only(top: 5),
+                                                            )
+                                                            ,Divider(
+                                                              color: Colors.grey,
+                                                            )
+                                                          ],
+                                                        ),
+                                                        margin: EdgeInsets.only(bottom: 5),
+                                                      ),
+                                                      Container(
+
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("Comentarios",style: TextStyle(fontSize: 16)),
+                                                            Container(
+
+                                                              child:  Text("${commentsString}",style: TextStyle(color: Colors.grey,fontSize: 15),),
+                                                              margin: EdgeInsets.only(top: 5),
+                                                            )
+                                                            ,Divider(
+                                                              color: Colors.grey,
+                                                            )
+                                                          ],
+                                                        ),
+                                                        margin: EdgeInsets.only(bottom: 5),
                                                       )
                                                     ],
                                                   ),
-                                                )
-                                              ],
-                                            ),
+                                                  buttons: [
+
+                                                  ]).show();
+                                            },
                                           )
                                         ],
                                       ),
@@ -1175,7 +1399,12 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                                       ),
                                     );
                                   }),
-                            )))
+                            ) : Center(
+                              child: Text("Por favor ingrese un proceso", style: TextStyle(color: Colors.grey,fontSize: 20),),
+                            )
+
+
+                        ))
                   ],
                 ),
               ),
@@ -1193,6 +1422,7 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
                       _panelController.open();
                       setState(() {
                         isPanelOpen = true;
+                        selectedItem=0;
                       });
                     },
                     child: Container(
@@ -1212,93 +1442,90 @@ class _HistoryPage extends State<HistoryPage>  with AfterLayoutMixin<HistoryPage
         ));
   }
 
-  getAllTypes() async{
-    Types superv= Types();
+  getAllTypes() async {
+    List<Controls> controls = await sqfly<ControlDao>()
+        .where({'process_id': selectedItem, 'sede_id': sede_id}).toList();
 
-    List<Types> supervisors= await superv.findAllByProcess(selectedItem);
-//selectedItem
-    supervisors.forEach((element) {
-      if(element.name!=null){
+    print("asdf sd  ${selectedItem}  ${controls}");
+    controls.forEach((element) {
+      if (element.name != null) {
         typesArray.add("${element.name}");
       }
-      print("insertando el type ${element.name}");
     });
 
     getAllComments();
   }
 
-  getAllSubtypesByType(name) async{
+  getAllSubtypesByType(name) async {
     List<String> subtypesArrayLocal = [];
 
     Types type = Types();
     Types typeSIncular = await type.findOneByName(name);
 
-  SubTypes superv= SubTypes();
+    SubTypes superv = SubTypes();
 
-    List<SubTypes> types= await superv.findOneByType(typeSIncular.id);
+    List<SubTypes> types = await superv.findOneByType(typeSIncular.id);
 
     types.forEach((element) {
       subtypesArrayLocal.add(element.name);
     });
 
     setState(() {
-      subtypesArray=subtypesArrayLocal;
-      modificable=3;
+      subtypesArray = subtypesArrayLocal;
+      modificable = 3;
       FocusScope.of(context).requestFocus(FocusNode());
-
     });
 
-      print("estos son los types ${subtypesArray}");
-    setState(() {
-    });
+    print("estos son los types ${subtypesArray}");
+    setState(() {});
   }
 
-  getAllComments() async{
-    Comments superv= Comments();
+  getAllComments() async {
+    List<Comments> comments = await sqfly<CommentDao>()
+        .where({'process_id': '${selectedItem}'}).toList();
 
-    List<Comments> supervisors= await superv.findOneByProcess(selectedItem);
-
-    supervisors.forEach((element) {
+    comments.forEach((element) {
       commentsArray.add(element.name);
-
     });
   }
 
-  getAllLabores() async{
-    Labor superv= Labor();
+  findLaboresByProcess() async {
+    List<Labor> labor =
+        await sqfly<LaborDao>().where({'process': '${selectedItem}'}).toList();
     setState(() {
-      labores=[];
+      actualLabores = labor;
     });
+  }
 
-    List<Labor> supervisors= await superv.findAll();
-
-    supervisors.forEach((element) {
+  getAllLabores() async {
     setState(() {
-      labores.add(element);
-
+      labores = [];
     });
+    List<Labor> labor = await sqfly<LaborDao>().all;
+
+    labor.forEach((element) {
+      setState(() {
+        print("esta es la labor   ${element}");
+        labores.add(element);
+      });
     });
 
     print(labores);
   }
 
-  getAllEmploys() async{
-    Employs superv= Employs();
-
-    List<Employs> supervisors= await superv.findAll();
-
-    supervisors.forEach((element) {
+  getAllEmploys() async {
+    List<Employs> emplo = await sqfly<EmployeeDao>().all;
+    emplo.forEach((element) {
       suggestions.add(element.name);
-
     });
+
+    await getAllLabores();
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
-
     print("asfasdf");
     // TODO: implement afterFirstLayout
     getAllEmploys();
-
   }
 }

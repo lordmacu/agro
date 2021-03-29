@@ -1,9 +1,13 @@
+import 'package:agrotest/DB.dart';
 import 'package:agrotest/history.dart';
 import 'package:agrotest/loadData.dart';
 import 'package:agrotest/login.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main()  async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await DB.init();
   runApp(MyApp());
 }
 

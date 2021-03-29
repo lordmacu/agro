@@ -1,19 +1,29 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:agrotest/DB.dart';
 
 class Employs {
     int _id;
     String _name;
-    int _factory;
+    int _sede;
 
+
+    Employs();
+
+    Employs.fromMap(Map<String, dynamic> map)
+        : _id = map['id'],
+          _name = map['name'],
+          _sede = map['sede_id'];
 
   Map<String, dynamic> toMap() {
     return {
       'id': _id,
       'name': _name,
-      'factory': _factory,
+      'sede_id': _sede,
     };
   }
+
+
 
     int get id => _id;
 
@@ -21,46 +31,67 @@ class Employs {
     _id = value;
   }
 
+
+  Future opens() async{
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'dbAgrsoOness.db');
+    await deleteDatabase(path);
+
+
+    return await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+          await db.execute(
+              'CREATE TABLE employees(id INTEGER PRIMARY KEY, sede_id INTEGER, name TEXT)');
+        });
+  }
   Future openDatabaseLocal() async{
+
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'dbAgrsoOness.db');
+
+
     return  openDatabase(
-       join(await getDatabasesPath(), 'dbTesdtssddddsssddddddssdsssds.db'),
+      path,
        onCreate: (db, version)  async{
+         Batch batch = db.batch();
 
-         await db.execute(
-           "DROP TABLE IF EXISTS  from types",
+
+         batch.execute(
+           "CREATE TABLE controls(id INTEGER PRIMARY KEY, order_control INTEGER, process_id INTEGER, sede_id INTEGER, item_id INTEGER)",
          );
 
-         await db.execute(
-           "DROP TABLE IF EXISTS from comments",
-         );
-         await  db.execute(
-           "DROP TABLE IF EXISTS from labores",
+         batch.execute(
+           "CREATE TABLE comments(id INTEGER PRIMARY KEY, name TEXT, process_id INTEGER)",
          );
 
-         await db.execute(
-           "DROP TABLE IF EXISTS from subtypes",
-         );
-
-
-         await db.execute(
-           "CREATE TABLE types(id INTEGER PRIMARY KEY, name TEXT, process_step INTEGER)",
-         );
-
-         await  db.execute(
-           "CREATE TABLE comments(id INTEGER PRIMARY KEY, name TEXT, process_step INTEGER)",
-         );
-
-         await db.execute(
-           "CREATE TABLE labores(id INTEGER PRIMARY KEY, type TEXT, supervisor TEXT, colaborator TEXT, asegurator TEXT, blocks TEXT, flowerType TEXT, process INTEGER, muestras TEXT, comments TEXT)",
+         batch.execute(
+           "CREATE TABLE dropdowns(id INTEGER PRIMARY KEY, flower_id INTEGER, item_id INTEGER, process_id INTEGER, sede_id INTEGER, item TEXT)",
          );
 
 
-         await db.execute(
-           "CREATE TABLE subtypes(id INTEGER PRIMARY KEY, name TEXT, control_type INTEGER)",
+         batch.execute(
+           "CREATE TABLE flowers(id INTEGER PRIMARY KEY, sede_id TEXT, name TEXT)",
          );
-         return db.execute(
-          "CREATE TABLE emplyois(id INTEGER PRIMARY KEY, name TEXT, factory INTEGER)",
-        );
+
+         batch.execute(
+           "CREATE TABLE sedes(id INTEGER PRIMARY KEY, name TEXT)",
+         );
+
+         batch.execute(
+           "CREATE TABLE variedad(id INTEGER PRIMARY KEY, flower_id INTEGER, sede_id INTEGER, name TEXT)",
+         );
+
+
+
+         batch.execute(
+           "CREATE TABLE employees(id INTEGER PRIMARY KEY, sede_id INTEGER, name TEXT)",
+         );
+         batch.execute(
+           "CREATE TABLE processes(id INTEGER PRIMARY KEY, name TEXT)",
+         );
+         List<dynamic> result = await batch.commit();
+
+          return ;
       },
 
       version: 1,
@@ -68,37 +99,55 @@ class Employs {
   }
 
   Future<void> save() async {
-     final Database db = await openDatabaseLocal();
+     final Database db = await opens();
     await db.insert(
-      'emplyois',
+      'employees',
       this.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<List<Employs>> findAll() async {
-     final Database db = await openDatabaseLocal();
 
-     final List<Map<String, dynamic>> maps = await db.query('emplyois');
+    Future<void> saveusers(List<Employs> employs) async {
+      final Database db = await opens();
+
+      await db.transaction((txn) async {
+        var batch = txn.batch();
+        employs.forEach((element) {
+
+          batch.rawInsert(
+              'INSERT INTO employees(id, sede_id, name) VALUES(?, ?, ?)',
+              [element.id, element.sede, '${element.name}']);
+        });
+
+        await batch.commit();
+      });
+
+    }
+
+  Future<List<Employs>> findAll() async {
+
+      final List<Map<String, dynamic>> maps =   await DB.query("SELECT * FROM employees");
 
      return List.generate(maps.length, (i) {
        Employs superv= Employs();
        superv.id=maps[i]['id'];
        superv.name=maps[i]['name'];
-       superv.factory=1;
+       superv.sede=maps[i]['sede_id'];
        return  superv;
      });
   }
 
-    int get factory => _factory;
 
-  set factory(int value) {
-    _factory = value;
+    int get sede => _sede;
+
+  set sede(int value) {
+    _sede = value;
   }
 
   @override
   String toString() {
-    return 'emplyois{_id: $_id, _name: $_name, _plantation: $_factory}';
+    return 'emplyois{_id: $_id, _name: $_name, _plantation: $_sede}';
   }
 
   String get name => _name;
