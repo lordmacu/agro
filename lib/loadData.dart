@@ -72,7 +72,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoadedTables = await prefs.getBool("loadGDddddddedfdfddnedradl1sd");
+    bool isLoadedTables = await prefs.getBool("loadGDddddddedfdfddneddradl1sd");
     _onLoading();
     if (isLoadedTables == null) {
        loadData();
@@ -116,7 +116,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
     final sqfly = await Sqfly(
       /// database named
-      name: 'datdacddddddddddsdddsdd',
+      name: 'datdacdddddddddddsdddsdd',
       // database version
       version: 2,
       logger: false,
@@ -320,7 +320,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
       isgetVarities = true;
     });
 
-    bool isLoadedTables = await prefs.setBool("loadGDddddddedfdfddnedradl1sd",true);
+    bool isLoadedTables = await prefs.setBool("loadGDddddddedfdfddneddradl1sd",true);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
