@@ -926,14 +926,14 @@ class _HistoryPage extends State<HistoryPage>
                             }
                           });
                           gonext();
-                          if (canNext == 0) {
+                         /* if (canNext == 0) {
                             gonext();
                           } else {
                             Toast.show(
                                 "Por favor complete las muestras", context,
                                 duration: Toast.LENGTH_LONG,
                                 gravity: Toast.BOTTOM);
-                          }
+                          }*/
                           //
                         },
                         shape: RoundedRectangleBorder(
