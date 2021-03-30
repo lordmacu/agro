@@ -14,7 +14,7 @@ class LaborDao extends Dao<Labor> {
   LaborDao()
       : super(
     '''
-       CREATE TABLE labores(id INTEGER PRIMARY KEY, type TEXT, supervisor TEXT, colaborator TEXT, asegurator TEXT, blocks TEXT, flowerType TEXT, process INTEGER, muestras TEXT, comments TEXT)
+       CREATE TABLE labores(id INTEGER PRIMARY KEY, type TEXT, supervisor TEXT, colaborator TEXT, asegurator TEXT, blocks TEXT, flowerType TEXT, process INTEGER, subprocess INTEGER, muestras TEXT,subtype TEXT, comments TEXT, date TEXT, variety TEXT, state INTEGER)
           ''',
     // use to decode and encode person
     converter: Converter(
@@ -28,4 +28,17 @@ class LaborDao extends Dao<Labor> {
        final results = await database.rawQuery('DELETE from labores where id = ${labor}');
       print("borrando labor numero tal ${labor}  ${results}");
      }
+
+  Future updateLabor(labor) async {
+
+    final results = await database.rawQuery('UPDATE  labores set state=1 where id = ${labor}');
+    print("actualizando labor numero tal ${labor}  ${results}");
+  }
+
+  Future getLaborsOrdered() async {
+
+      var results= await database.rawQuery('SELECT * from labores order by id desc');
+      return results.map((result) => converter.encode(result) as Labor).toList();
+
+  }
 }

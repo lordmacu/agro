@@ -22,10 +22,12 @@ class muestraDialog extends StatefulWidget {
   String flower;
   Function exportSubtypes;
   String selectedType;
+  int subControl;
 
   muestraDialog(
       {this.flower,
       this.sede_id,
+        this.subControl,
       this.selectedItem,
       this.typesArray,
       this.exportSubtypes,
@@ -48,24 +50,49 @@ class _muestraDialogState extends State<muestraDialog> {
   var sqfly = null;
 
   getAllSubtypesByType(name, index) async {
+
     if (index != 0) {
       //
-      Flowers flower = await sqfly<FlowerDao>()
+     /* Flowers flower = await sqfly<FlowerDao>()
           .findBy({'name': '${widget.flower}', 'sede_id': widget.sede_id});
+*/
 
       isLoaded = false;
       List<String> subtypesArrayLocal = [];
 
-      List<Dropdown> control = await sqfly<DropdownDao>().where({
-        'name': '${name}',
-        'sede_id': widget.sede_id,
-        'flower_id': flower.id,
-        'process_id': widget.selectedItem
-      }).toList();
 
-      control.forEach((element) {
-        subtypesArrayLocal.add(element.desplegable);
-      });
+
+      if(widget.selectedItem==4){
+        List<Dropdown> controls = await sqfly<DropdownDao>().where({
+          'name': '${name}',
+           'sede_id': widget.sede_id,
+
+          //  'flower_id': flower.id,
+          'process_id': widget.subControl
+        }).toList();
+
+        controls.forEach((element) {
+          subtypesArrayLocal.add(element.desplegable);
+        });
+        print("aquii name ${widget.subControl} ${name} ${controls}");
+
+
+
+      }else{
+        Flowers flower = await sqfly<FlowerDao>()
+            .findBy({'name': '${widget.flower}', 'sede_id': widget.sede_id});
+        List<Dropdown> control = await sqfly<DropdownDao>().where({
+          'name': '${name}',
+          'sede_id': widget.sede_id,
+          'flower_id': flower.id,
+          'process_id': widget.selectedItem
+        }).toList();
+
+        control.forEach((element) {
+          subtypesArrayLocal.add(element.desplegable);
+        });
+      }
+
 
       setState(() {
         subtypesArray = subtypesArrayLocal;
@@ -97,7 +124,7 @@ class _muestraDialogState extends State<muestraDialog> {
   Future initDb() async {
     sqfly = await Sqfly(
       /// database named
-      name: 'datacdsdd',
+      name: 'datdacddddddddddsdddsdd',
       // database version
       version: 2,
       logger: false,
@@ -161,6 +188,7 @@ class _muestraDialogState extends State<muestraDialog> {
 
                   var valorIndex = widget.typesArray.indexOf(suggestion);
 
+                  print("aquiiii ");
                   getAllSubtypesByType(suggestion, valorIndex);
                 },
                 validator: (value) {

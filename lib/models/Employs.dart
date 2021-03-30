@@ -6,18 +6,30 @@ class Employs {
     int _id;
     String _name;
     int _sede;
+    String _type;
+    String _position;
 
 
-    Employs();
+    String get type => _type;
+
+  set type(String value) {
+    _type = value;
+  }
+
+  Employs();
 
     Employs.fromMap(Map<String, dynamic> map)
         : _id = map['id'],
           _name = map['name'],
+          _type = map['type'],
+          _position = map['position'],
           _sede = map['sede_id'];
 
   Map<String, dynamic> toMap() {
     return {
       'id': _id,
+      'type': _type,
+      'position': _position,
       'name': _name,
       'sede_id': _sede,
     };
@@ -145,9 +157,10 @@ class Employs {
     _sede = value;
   }
 
-  @override
+
+    @override
   String toString() {
-    return 'emplyois{_id: $_id, _name: $_name, _plantation: $_sede}';
+    return 'Employs{_id: $_id, _name: $_name, _sede: $_sede, _type: $_type, _position: $_position}';
   }
 
   String get name => _name;
@@ -156,5 +169,9 @@ class Employs {
     _name = value;
   }
 
+    String get position => _position;
 
+  set position(String value) {
+    _position = value;
+  }
 }

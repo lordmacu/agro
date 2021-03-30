@@ -5,7 +5,7 @@ class EmployeeDao extends Dao<Employs> {
   EmployeeDao()
       : super(
     '''
-         CREATE TABLE employees(id INTEGER PRIMARY KEY, sede_id INTEGER, name TEXT)
+         CREATE TABLE employees(id INTEGER PRIMARY KEY, sede_id INTEGER, name TEXT, type TEXT, position TEXT)
           ''',
     // use to decode and encode person
     converter: Converter(

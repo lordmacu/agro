@@ -80,7 +80,12 @@ class Flowers {
   }
 
 
-    String get sedeId => _sedeId;
+    @override
+  String toString() {
+    return 'Flowers{_id: $_id, _name: $_name, _sedeId: $_sedeId}';
+  }
+
+  String get sedeId => _sedeId;
 
   set sedeId(String value) {
     _sedeId = value;
