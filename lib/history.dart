@@ -1961,6 +1961,9 @@ class _HistoryPage extends State<HistoryPage>
   }
 
   getAllComments() async {
+    setState(() {
+      commentsArray=[];
+    });
     List<Comments> comments = await sqfly<CommentDao>()
         .where({'process_id': '${selectedItem}'}).toList();
 
@@ -1971,6 +1974,9 @@ class _HistoryPage extends State<HistoryPage>
   }
 
   findLaboresByProcess() async {
+    setState(() {
+      actualLabores=[];
+    });
     List<Labor> labor =
         await sqfly<LaborDao>().where({'process': '${selectedItem}'}).toList();
     setState(() {
@@ -1994,6 +2000,9 @@ class _HistoryPage extends State<HistoryPage>
   }
 
   getAllEmploys() async {
+    setState(() {
+      suggestionsSupervisor=[];
+    });
     List<Employs> emplo = await sqfly<EmployeeDao>().all;
     emplo.forEach((element) {
       suggestions.add(element.name);
