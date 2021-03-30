@@ -23,6 +23,7 @@ class _LoginPage extends State<LoginPage> {
   int _counter = 0;
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible;
+  TextEditingController emailController;
 
   void _incrementCounter() {
     setState(() {
@@ -38,6 +39,8 @@ class _LoginPage extends State<LoginPage> {
   @override
   void initState() {
     _passwordVisible = false;
+    emailController= TextEditingController();
+
   }
 
   @override
@@ -118,6 +121,7 @@ class _LoginPage extends State<LoginPage> {
                                       children: <Widget>[
                                         Container(
                                           child: TextFormField(
+                                            controller: emailController,
                                             autofocus: false,
                                             style: TextStyle(
                                                 fontSize: 15.0, color: Colors.black),
@@ -217,9 +221,15 @@ class _LoginPage extends State<LoginPage> {
                                                         borderRadius:
                                                         BorderRadius.circular(30.0)),
                                                     onPressed: () {
+                                                      int sede=0;
+                                                      if(emailController.text=="fe@calidar.com"){
+                                                        sede=2;
+                                                      }else{
+                                                        sede=1;
+                                                      }
                                                       Navigator.push(
                                                         context,
-                                                        MaterialPageRoute(builder: (context) => HistoryPage()),
+                                                        MaterialPageRoute(builder: (context) => HistoryPage(sede: sede)),
                                                       );
                                                     },
                                                     child: Container(

@@ -34,7 +34,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:http/http.dart' as http;
 
 class HistoryPage extends StatefulWidget {
-  HistoryPage({Key key, this.title}) : super(key: key);
+  HistoryPage({Key key, this.sede}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -45,7 +45,7 @@ class HistoryPage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  final int sede;
 
   @override
   _HistoryPage createState() => _HistoryPage();
@@ -71,7 +71,7 @@ class _HistoryPage extends State<HistoryPage>
     });
   }
 
-  int sede_id = 2;
+  int sede_id = 0;
   List<String> suggestionsSupervisor = [];
   List<String> suggestionsOperario = [];
   List<String> suggestions = [];
@@ -104,6 +104,9 @@ class _HistoryPage extends State<HistoryPage>
 
   @override
   void initState() {
+    sede_id= widget.sede;
+
+    print("esta es la sede final ${sede_id}");
     _passwordVisible = false;
     _panelController = PanelController();
     myFocusNode = FocusNode();
@@ -2003,12 +2006,12 @@ class _HistoryPage extends State<HistoryPage>
     setState(() {
       suggestionsSupervisor=[];
     });
-    List<Employs> emplo = await sqfly<EmployeeDao>().all;
+    List<Employs> emplo = await sqfly<EmployeeDao>().where({"sede_id": sede_id}).toList();
     emplo.forEach((element) {
       suggestions.add(element.name);
     });
     List<Employs> supervisors =
-        await sqfly<EmployeeDao>().where({"type": "Supervisor"}).toList();
+        await sqfly<EmployeeDao>().where({"type": "Supervisor","sede_id": sede_id}).toList();
     supervisors.forEach((element) {
       suggestionsSupervisor.add(element.name);
     });
