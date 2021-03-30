@@ -8,7 +8,14 @@ class Controls {
     int _orderControl;
     int _processId;
     int _itemId;
+    int _flowerId;
 
+
+    int get flowerId => _flowerId;
+
+  set flowerId(int value) {
+    _flowerId = value;
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -16,6 +23,7 @@ class Controls {
       'sede_id': _sedeId,
       'name': _name,
       'order_control': _orderControl,
+      'flower_id': _flowerId,
       'process_id': _processId,
       'item_id': _itemId
     };
@@ -27,6 +35,7 @@ class Controls {
           _processId = map['process_id'],
           _itemId = map['item_id'],
           _name = map['name'],
+          _flowerId = map['flower_id'],
           _sedeId = map['sede_id'];
 
   Controls();

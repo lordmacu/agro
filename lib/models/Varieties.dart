@@ -68,6 +68,11 @@ class Varieties {
 
     }
 
+    @override
+  String toString() {
+    return 'Varieties{_id: $_id, _name: $_name, _sedeId: $_sedeId, _flowerId: $_flowerId}';
+  }
+
   Future<List<Varieties>> findAll() async {
      final Database db = await openDatabaseLocal();
 

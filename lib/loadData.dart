@@ -72,7 +72,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoadedTables = await prefs.getBool("loadGeneral1s");
+    bool isLoadedTables = await prefs.getBool("loadGDddddddedfdfddnedradl1sd");
     _onLoading();
     if (isLoadedTables == null) {
        loadData();
@@ -116,7 +116,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
     final sqfly = await Sqfly(
       /// database named
-      name: 'datacdsdd',
+      name: 'datdacddddddddddsdddsdd',
       // database version
       version: 2,
       logger: false,
@@ -147,8 +147,11 @@ class _LoadDataPagePage extends State<LoadDataPage> {
       dropdown.name = responsegetEmployee[i]["name"];
       dropdown.sede = responsegetEmployee[i]["sede_id"];
       dropdown.id = responsegetEmployee[i]["id"];
+      dropdown.type = responsegetEmployee[i]["type_position"];
+      dropdown.position = responsegetEmployee[i]["position"];
       employs.add(dropdown);
     }
+
 
      sqfly<EmployeeDao>().createAll(employs); // insertAll
 
@@ -165,11 +168,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
     for (var i = 0; i < response.length; i++) {
 
       try{
-
-
-
       Dropdown dropdown = Dropdown();
-
       if (response[i]["flower_id"] == "") {
         dropdown.flowerId = 0;
       } else {
@@ -212,6 +211,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
       dropdown.sedeId = responsegetDropdowns[i]["sede_id"];
       dropdown.name = responsegetDropdowns[i]["name"];
       dropdown.itemId = responsegetDropdowns[i]["item_id"];
+      dropdown.flowerId = responsegetDropdowns[i]["flower_id"];
       dropdown.id = responsegetDropdowns[i]["id"];
       controlsArray.add(dropdown);
     }
@@ -320,7 +320,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
       isgetVarities = true;
     });
 
-    bool isLoadedTables = await prefs.setBool("loadGeneral1s",true);
+    bool isLoadedTables = await prefs.setBool("loadGDddddddedfdfddnedradl1sd",true);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
