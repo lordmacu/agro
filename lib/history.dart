@@ -71,7 +71,7 @@ class _HistoryPage extends State<HistoryPage>
     });
   }
 
-  int sede_id = 1;
+  int sede_id = 2;
   List<String> suggestionsSupervisor = [];
   List<String> suggestionsOperario = [];
   List<String> suggestions = [];
@@ -84,7 +84,7 @@ class _HistoryPage extends State<HistoryPage>
   Future initDb() async {
     sqfly = await Sqfly(
       /// database named
-      name: 'datdacddddddddddsdddsdd',
+      name: 'datdacdddddddddddsdddsdd',
       // database version
       version: 2,
       logger: false,
@@ -1911,11 +1911,15 @@ class _HistoryPage extends State<HistoryPage>
         Flowers flowerItem = await sqfly<FlowerDao>()
             .findBy({'name': '${flower}', 'sede_id': sede_id});
 
+
         controls = await sqfly<ControlDao>().where({
           'process_id': selectedItem,
           'sede_id': sede_id,
           'flower_id': flowerItem.id
         }).toList();
+
+        print("eyyyy aquiiii ${selectedItem}  ${sede_id}  ${flowerItem.id}");
+
       } else {
         controls = await sqfly<ControlDao>()
             .where({'process_id': selectedItem, 'sede_id': sede_id}).toList();
