@@ -8,6 +8,7 @@ import 'package:agrotest/daos/LaborDao.dart';
 import 'package:agrotest/daos/VaritiesDao.dart';
 import 'package:agrotest/dialogs/muestraDialog.dart';
 import 'package:agrotest/helpers.dart';
+import 'package:agrotest/listPeople.dart';
 import 'package:agrotest/models/Comments.dart';
 import 'package:agrotest/models/Controls.dart';
 import 'package:agrotest/models/Employs.dart';
@@ -15,9 +16,11 @@ import 'package:agrotest/models/Flowers.dart';
 import 'package:agrotest/models/Labor.dart';
 import 'package:agrotest/models/SubTypes.dart';
 import 'package:agrotest/models/Supervisor.dart';
+import 'package:agrotest/models/TipoMuestra.dart';
 import 'package:agrotest/models/Types.dart';
 import 'package:agrotest/models/Varieties.dart';
 import 'package:agrotest/models/muestrasModel.dart';
+import 'package:agrotest/selectTipoMuestra.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -287,165 +290,92 @@ class _HistoryPage extends State<HistoryPage>
             key: _formKey,
             child: Column(
               children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 15),
-                  child: TypeAheadFormField(
-                    noItemsFoundBuilder: (BuildContext context) {
-                      return null;
-                    },
-                    textFieldConfiguration: TextFieldConfiguration(
-                      controller: this._supervisorTextEdition,
-                      decoration: new InputDecoration(
-                        labelText: "Supervisor",
-                        fillColor: Colors.grey.withOpacity(0.1),
-                        filled: true,
-                        focusColor: Color(0xff85a335),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xff85a335)),
-                          borderRadius: BorderRadius.circular(25.7),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(25.7),
-                        ),
-                        border: new OutlineInputBorder(
-                          borderRadius: new BorderRadius.circular(25.0),
-                          borderSide: new BorderSide(),
-                        ),
-                        //fillColor: Colors.green
-                      ),
-                    ),
-                    suggestionsCallback: (pattern) {
-                      Helpers helpers = Helpers();
-                      return helpers.filterStrings(
-                          suggestionsSupervisor, pattern);
-                    },
-                    itemBuilder: (context, suggestion) {
-                      return ListTile(
-                        title: Text(suggestion),
-                      );
-                    },
-                    transitionBuilder: (context, suggestionsBox, controller) {
-                      return suggestionsBox;
-                    },
-                    onSuggestionSelected: (suggestion) {
-                      this._supervisorTextEdition.text = suggestion;
-                      this._formKey.currentState.validate();
-                    },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Selecciona un supervisor';
-                      }
-                    },
-                    onSaved: (value) => this._selectedSupervisor = value,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 15),
-                  child: TypeAheadFormField(
-                    noItemsFoundBuilder: (BuildContext context) {
-                      return null;
-                    },
-                    textFieldConfiguration: TextFieldConfiguration(
-                      controller: this._colaboradorTextEdition,
-                      decoration: new InputDecoration(
-                        labelText: "Colaborador",
-                        fillColor: Colors.grey.withOpacity(0.1),
-                        filled: true,
-                        focusColor: Color(0xff85a335),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xff85a335)),
-                          borderRadius: BorderRadius.circular(25.7),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(25.7),
-                        ),
-                        border: new OutlineInputBorder(
-                          borderRadius: new BorderRadius.circular(25.0),
-                          borderSide: new BorderSide(),
-                        ),
-                        //fillColor: Colors.green
-                      ),
-                    ),
-                    suggestionsCallback: (pattern) {
-                      Helpers helpers = Helpers();
-                      return helpers.filterStrings(suggestions, pattern);
-                    },
-                    itemBuilder: (context, suggestion) {
-                      return ListTile(
-                        title: Text(suggestion),
-                      );
-                    },
-                    transitionBuilder: (context, suggestionsBox, controller) {
-                      return suggestionsBox;
-                    },
-                    onSuggestionSelected: (suggestion) {
-                      this._colaboradorTextEdition.text = suggestion;
-                      this._formKey.currentState.validate();
-                    },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Selecciona un colaborador';
-                      }
-                    },
-                    onSaved: (value) => this._selectedColaborador = value,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(bottom: 15),
-                  child: TypeAheadFormField(
-                    getImmediateSuggestions: false,
-                    noItemsFoundBuilder: (BuildContext context) {
-                      return null;
-                    },
-                    textFieldConfiguration: TextFieldConfiguration(
-                      controller: this._aseguradorTextEdition,
-                      decoration: new InputDecoration(
-                        labelText: "Asegurador",
 
-                        fillColor: Colors.grey.withOpacity(0.1),
-                        filled: true,
-                        focusColor: Color(0xff85a335),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xff85a335)),
-                          borderRadius: BorderRadius.circular(25.7),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(25.7),
-                        ),
-                        border: new OutlineInputBorder(
-                          borderRadius: new BorderRadius.circular(25.0),
-                          borderSide: new BorderSide(),
-                        ),
-                        //fillColor: Colors.green
-                      ),
-                    ),
-                    suggestionsCallback: (pattern) {
-                      Helpers helpers = Helpers();
-                      return helpers.filterStrings(suggestions, pattern);
-                    },
-                    itemBuilder: (context, suggestion) {
-                      return ListTile(
-                        title: Text(suggestion),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+
+                  width: double.infinity,
+                  child: RaisedButton(
+                    onPressed: () async{
+                      final result = await Navigator.push(
+                        context,
+                        // Create the SelectionScreen in the next step.
+                        MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: suggestionsSupervisor)),
                       );
+                        if(result!=null){
+                          setState(() {
+                            this._selectedSupervisor=result;
+                          });
+
+                        }else{
+                          setState(() {
+                            this._selectedSupervisor=null;
+                          });
+
+                        }
                     },
-                    transitionBuilder: (context, suggestionsBox, controller) {
-                      return suggestionsBox;
-                    },
-                    onSuggestionSelected: (suggestion) {
-                      this._aseguradorTextEdition.text = suggestion;
-                      this._formKey.currentState.validate();
-                    },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Selecciona un asegurador';
-                      }
-                    },
-                    onSaved: (value) => this._selectedAsegurador = value,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    child: this._selectedSupervisor==null ? Text("Supervisor") :Text("${this._selectedSupervisor}") ,
                   ),
                 ),
+
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+
+                  width: double.infinity,
+                  child: RaisedButton(
+                    onPressed: () async{
+                      final result = await Navigator.push(
+                        context,
+                        // Create the SelectionScreen in the next step.
+                        MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: suggestions)),
+                      );
+                      if(result!=null){
+                        setState(() {
+                          this._selectedColaborador=result;
+                        });
+
+                      }else{
+                        setState(() {
+                          this._selectedColaborador=null;
+                        });
+
+                      }
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    child: this._selectedColaborador==null ? Text("Colaborador") :Text("${this._selectedColaborador}") ,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  width: double.infinity,
+                  child: RaisedButton(
+                    onPressed: () async{
+                      final result = await Navigator.push(
+                        context,
+                        // Create the SelectionScreen in the next step.
+                        MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: suggestions)),
+                      );
+                      if(result!=null){
+                        setState(() {
+                          this._selectedAsegurador=result;
+                        });
+
+                      }else{
+                        setState(() {
+                          this._selectedAsegurador=null;
+                        });
+
+                      }
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    child: this._selectedAsegurador==null ? Text("Asegurador") :Text("${this._selectedAsegurador}") ,
+                  ),
+                ),
+
                 selectedItem == 4
                     ? Container(
                         child: RaisedButton(
@@ -466,56 +396,61 @@ class _HistoryPage extends State<HistoryPage>
                       )
                     : Container(),
                 Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  child: Column(
                     children: [
-                      selectedItem < 3
-                          ? RaisedButton(
-                              color: block == "Bloque"
-                                  ? Colors.grey
-                                  : Color(0xff85a335),
-                              onPressed: () {
-                                showPickerBlocks(context);
-                              },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0)),
-                              child: Text(
-                                "${block}",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
-                          : Container(),
-                      selectedItem < 3
-                          ? RaisedButton(
-                              color: flower == "Tipo de flor"
-                                  ? Colors.grey
-                                  : Color(0xff85a335),
-                              onPressed: () async {
-                                await showPickerFlowers(context);
-                              },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0)),
-                              child: Text(
-                                "${flower}",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
-                          : Container(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          selectedItem < 3
+                              ? RaisedButton(
+                            color: block == "Bloque"
+                                ? Colors.grey
+                                : Color(0xff85a335),
+                            onPressed: () {
+                              showPickerBlocks(context);
+                            },
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)),
+                            child: Text(
+                              "${block}",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                              : Container(),
+                          selectedItem < 3
+                              ? RaisedButton(
+                            color: flower == "Tipo de flor"
+                                ? Colors.grey
+                                : Color(0xff85a335),
+                            onPressed: () async {
+                              await showPickerFlowers(context);
+                            },
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)),
+                            child: Text(
+                              "${flower}",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                              : Container(),
+
+                        ],
+                      ),
                       varieties.length > 0
                           ? RaisedButton(
-                              color: selectedVariety == "Variedad"
-                                  ? Colors.grey
-                                  : Color(0xff85a335),
-                              onPressed: () async {
-                                await showPickerVarieties(context);
-                              },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0)),
-                              child: Text(
-                                "${selectedVariety}",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
+                        color: selectedVariety == "Variedad"
+                            ? Colors.grey
+                            : Color(0xff85a335),
+                        onPressed: () async {
+                          await showPickerVarieties(context);
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0)),
+                        child: Text(
+                          "${selectedVariety}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
                           : Container()
                     ],
                   ),
@@ -638,38 +573,32 @@ class _HistoryPage extends State<HistoryPage>
         body: {"id": "${labor.id}", "user_id": "1"});
   }
 
-  showDialogMuestra(int muestra) {
+  showDialogMuestra(int muestra)  async{
     SelectedTypes = [];
     subtypesArray = [];
 
-    print("aquiiii ${selectedItem}");
 
-    Alert(
-        context: context,
-        title: "Muestra ${muestra + 1}",
-        style: AlertStyle(
-          titleStyle: TextStyle(height: 0),
-          alertPadding: EdgeInsets.all(0),
-        ),
-        content: muestraDialog(
-          flower: flower,
-          sede_id: sede_id,
-          selectedItem: selectedItem,
-          subControl: subControl,
-          typesArray: typesArray,
-          subTypesString: muestrasArray[muestra].subtypes,
-          selectedType: muestrasArray[muestra].type,
-          exportSubtypes: (List<String> val, type) {
-            setState(() {
-              muestrasArray[muestra].name = "Muestra ${muestra}";
-              muestrasArray[muestra].type = type;
-              muestrasArray[muestra].subtypes = val;
-            });
+    muestrasModel result = await Navigator.push(
+      context,
 
-            Navigator.pop(context);
-          },
-        ),
-        buttons: []).show();
+      MaterialPageRoute(builder: (context) => SelectTipoMuestra(
+      flower: flower,
+        muestra: muestra,
+        muestrasArray: muestrasArray[muestra],
+        sede_id: sede_id,
+        selectedItem: selectedItem,
+        subControl: subControl,
+        typesArray: typesArray,
+      )),
+    );
+
+    if(result!=null){
+      muestrasArray[muestra]=result;
+      print("aqui este es el resultado ${muestrasArray}");
+    }
+
+
+
   }
 
   List<Widget> showItemsControl() {
@@ -753,6 +682,22 @@ class _HistoryPage extends State<HistoryPage>
     return muestras;
   }
 
+  formatMuestrasArray(List<muestrasModel> muestras){
+    List<muestrasModel> muestrasString=[];
+
+    muestras.forEach((element) {
+      List<String> tipos=[];
+      element.subtypes.forEach((elements) {
+        tipos.add("${elements.tipo} - ${elements.desplegable}");
+      });
+      element.subtypesString=tipos;
+
+      muestrasString.add(element);
+    });
+
+    return muestrasString;
+  }
+
   Widget StepFour() {
     return Container(
       width: double.infinity,
@@ -819,7 +764,7 @@ class _HistoryPage extends State<HistoryPage>
                   onPressed: () {
                     Labor labor = Labor();
                     labor.comments = jsonEncode(selectedComments);
-                    labor.muestras = jsonEncode(muestrasArray);
+                labor.muestras = jsonEncode(formatMuestrasArray(muestrasArray));
                     labor.flowerType = flower;
                     labor.blocks = block;
                     labor.asegurator = _selectedAsegurador;
@@ -831,7 +776,7 @@ class _HistoryPage extends State<HistoryPage>
                     labor.subProcess = subControl;
                     labor.date = DateTime.now().toString();
 
-                    sqfly<LaborDao>().create(labor); // insertAll
+                 sqfly<LaborDao>().create(labor); // insertAll
 
                     getAllLabores();
 
@@ -1000,6 +945,16 @@ class _HistoryPage extends State<HistoryPage>
     );
   }
 
+
+  Widget parseSubType(subtypes){
+
+   /// var subtypesJson= jsonDecode(subtypes);
+    print("estos son los subtypes ${subtypes}");
+    return Text("${subtypes}",style: TextStyle(
+        fontSize:
+        16));
+  }
+
   Widget StepTwo() {
     return Container(
       padding: EdgeInsets.only(left: 20, bottom: 20, right: 30),
@@ -1075,6 +1030,10 @@ class _HistoryPage extends State<HistoryPage>
                 setState(() {
                   selectedItem = 2;
                   currentStep = 1;
+
+                  _selectedSupervisor = null;
+                  _selectedColaborador = null;
+                  _selectedAsegurador = null;
                 });
 
                 getAllTypes();
@@ -1522,13 +1481,16 @@ class _HistoryPage extends State<HistoryPage>
                                                     ),
                                                   ),
                                                   onTap: () async {
+
+                                                    print(labores[index]
+                                                        );
                                                     var muestraDecode =
                                                         jsonDecode(
                                                             labores[index]
                                                                 .muestras);
                                                     String subtypes =
                                                         muestraDecode[0]
-                                                                ["subtypes"]
+                                                                ["typeString"]
                                                             .join(", ");
                                                     String type =
                                                         muestraDecode[0]
@@ -1752,14 +1714,7 @@ class _HistoryPage extends State<HistoryPage>
                                                                           fontSize:
                                                                               16)),
                                                                   Container(
-                                                                    child: Text(
-                                                                      "${subtypes}",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .grey,
-                                                                          fontSize:
-                                                                              15),
-                                                                    ),
+                                                                    child: parseSubType(subtypes),
                                                                     margin: EdgeInsets
                                                                         .only(
                                                                             top:
@@ -2005,6 +1960,7 @@ class _HistoryPage extends State<HistoryPage>
   getAllEmploys() async {
     setState(() {
       suggestionsSupervisor=[];
+      suggestions=[];
     });
     List<Employs> emplo = await sqfly<EmployeeDao>().where({"sede_id": sede_id}).toList();
     emplo.forEach((element) {
