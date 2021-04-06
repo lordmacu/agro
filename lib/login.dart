@@ -222,7 +222,7 @@ class _LoginPage extends State<LoginPage> {
                                                         BorderRadius.circular(30.0)),
                                                     onPressed: () {
                                                       int sede=0;
-                                                      if(emailController.text=="fe@calidar.com"){
+                                                      if(emailController.text=="fe@calidad.com"){
                                                         sede=2;
                                                       }else{
                                                         sede=1;

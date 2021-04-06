@@ -2,11 +2,14 @@ import 'package:agrotest/daos/ControlDao.dart';
 import 'package:agrotest/daos/DropdownDao.dart';
 import 'package:agrotest/daos/FlowerDao.dart';
 import 'package:agrotest/helpers.dart';
+import 'package:agrotest/listPeople.dart';
 import 'package:agrotest/models/Controls.dart';
 import 'package:agrotest/models/Dropdown.dart';
 import 'package:agrotest/models/Flowers.dart';
 import 'package:agrotest/models/SubTypes.dart';
+import 'package:agrotest/models/TipoMuestra.dart';
 import 'package:agrotest/models/Types.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:group_button/group_button.dart';
@@ -14,7 +17,7 @@ import 'package:sqfly/sqfly.dart';
 
 class muestraDialog extends StatefulWidget {
   List<String> typesArray = [];
-  List<String> subTypesString = [];
+  List<TipoMuestra> subTypesString = [];
   int selectedValue;
 
   int selectedItem;
@@ -46,16 +49,20 @@ class _muestraDialogState extends State<muestraDialog> {
   List<String> subtypesArray = [];
   List<String> subTypesStringLocal = [];
 
+  String selectedDesplegable;
+
   bool isLoaded = false;
+
+  bool addNewTipo=false;
   var sqfly = null;
+  List<TipoMuestra> muestras=[];
+
+
 
   getAllSubtypesByType(name, index) async {
 
     if (index != 0) {
-      //
-     /* Flowers flower = await sqfly<FlowerDao>()
-          .findBy({'name': '${widget.flower}', 'sede_id': widget.sede_id});
-*/
+
 
       isLoaded = false;
       List<String> subtypesArrayLocal = [];
@@ -74,9 +81,6 @@ class _muestraDialogState extends State<muestraDialog> {
         controls.forEach((element) {
           subtypesArrayLocal.add(element.desplegable);
         });
-        print("aquii name ${widget.subControl} ${name} ${controls}");
-
-
 
       }else{
         Flowers flower = await sqfly<FlowerDao>()
@@ -118,6 +122,7 @@ class _muestraDialogState extends State<muestraDialog> {
     super.initState();
 
     this._typeTextEdition.text = "${widget.selectedType}";
+
     initDb();
   }
 
@@ -136,144 +141,197 @@ class _muestraDialogState extends State<muestraDialog> {
     }
   }
 
+  addTipoMuestra() async{
+    setState(() {
+      isLoaded = false;
+
+    });
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: widget.typesArray)),
+    );
+    if(result!=null){
+
+      setState(() {
+        isLoaded = true;
+
+        SelectedTypes = [];
+        widget.subTypesString = [];
+
+        this._selectedSupervisor=result;
+      });
+
+      this._selectedType = result;
+      this._typeTextEdition.text = result;
+      var valorIndex = widget.typesArray.indexOf(result);
+
+      getAllSubtypesByType(result, valorIndex);
+
+    }else{
+      setState(() {
+        this._typeTextEdition.text = "";
+
+        this._selectedType = "";
+
+
+        this._typeTextEdition.clear();
+        isLoaded = false;
+        SelectedTypes = [];
+
+        widget.subTypesString = [];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(bottom: 15, top: 20),
-          child: Stack(
-            children: [
-              TypeAheadFormField(
-                noItemsFoundBuilder: (BuildContext context) {
-                  return null;
-                },
-                textFieldConfiguration: TextFieldConfiguration(
-                  controller: this._typeTextEdition,
-                  decoration: new InputDecoration(
-                    labelText: "Tipo de muestra",
-                    fillColor: Colors.grey.withOpacity(0.1),
-                    filled: true,
-                    focusColor: Color(0xff85a335),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xff85a335)),
-                      borderRadius: BorderRadius.circular(25.7),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(25.7),
-                    ),
-                    border: new OutlineInputBorder(
-                      borderRadius: new BorderRadius.circular(25.0),
-                      borderSide: new BorderSide(),
-                    ),
-                    //fillColor: Colors.green
-                  ),
-                ),
-                suggestionsCallback: (pattern) {
-                  Helpers helpers = Helpers();
-                  return helpers.filterStringsAll(widget.typesArray, pattern);
-                },
-                itemBuilder: (context, suggestion) {
-                  return ListTile(
-                    title: Text(suggestion),
-                  );
-                },
-                transitionBuilder: (context, suggestionsBox, controller) {
-                  return suggestionsBox;
-                },
-                onSuggestionSelected: (suggestion) {
-                  this._typeTextEdition.text = suggestion;
-
-                  var valorIndex = widget.typesArray.indexOf(suggestion);
-
-                  print("aquiiii ");
-                  getAllSubtypesByType(suggestion, valorIndex);
-                },
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Selecciona un supervisor';
-                  }
-                },
-                onSaved: (value) {
-                  print("aqui esta la cosa");
-                  this._selectedType = value;
-                  this._typeTextEdition.text = value;
-                  var valorIndex = widget.typesArray.indexOf(value);
-
-                  getAllSubtypesByType(value, valorIndex);
-                },
-              ),
-              Positioned(
-                top: 20,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () {
-                    print("asdfasd fasdf ");
-                    setState(() {
-                      this._typeTextEdition.text = "";
-
-                      this._selectedType = "";
-
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      this._typeTextEdition.clear();
-                      isLoaded = false;
-                      SelectedTypes = [];
-
-                      widget.subTypesString = [];
-                    });
-                  },
-                  child: Container(
-                    child: Icon(Icons.close),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        isLoaded
-            ? GroupButton(
-                isRadio: false,
-                selectedButtons: widget.subTypesString,
-                spacing: 10,
-                onSelected: (index, isSelected) {
-                  print('$index button is selected');
-
-                  final person = SelectedTypes.firstWhere(
-                      (element) => element == index, orElse: () {
-                    return null;
-                  });
-
-                  if (person != null) {
-                    SelectedTypes.remove(person);
-                  } else {
-                    SelectedTypes.add(index);
-                  }
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                buttons: subtypesArray,
-              )
-            : Container(),
-        RaisedButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+    return Scaffold(
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.only(left: 20,right: 20,bottom: 10),
+        child: RaisedButton(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0)),
           color: Color(0xffFFB74D),
-          onPressed: () {
-            List<String> stringTypes = [];
+          onPressed: muestras.length>0 ? (){
+              widget.exportSubtypes(muestras);
+          } : null,
+          child: Text("Guardar",style: TextStyle(color: Colors.white),),
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            !addNewTipo ? Column(
+              children: [
+                ListView.builder
+                  (
+                    shrinkWrap: true,
+                    itemCount: muestras.length,
 
-            SelectedTypes.forEach((element) {
-              stringTypes.add(subtypesArray[element]);
-            });
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Card(
+                          child: Container(
+                            padding: EdgeInsets.only(left: 15,right: 15,top: 10,bottom: 10),
+                            child: Row(
+                              children: [
+                                Expanded(child: Text("${muestras[index].tipo} - ${muestras[index].desplegable}",style: TextStyle(fontSize: 18),)),
+                                InkWell(
+                                  onTap: (){
+                                    setState(() {
+                                      muestras.removeAt(index);
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    child: Icon(Icons.delete,color: Colors.redAccent,),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20, top: 0),
+                  child:Container(
+                    child: RaisedButton(
+                      color:Color(0xff85a335) ,
+                      onPressed: (){
+                        setState(() {
+                          addNewTipo=!addNewTipo;
+                          subtypesArray=[];
+                          this._selectedSupervisor=null;
+                        });
 
-            widget.exportSubtypes(stringTypes, _typeTextEdition.text);
-          },
-          child: Text(
-            "Seleccionar",
-            style: TextStyle(color: Colors.white, fontSize: 20),
-          ),
-        )
-      ],
+                        addTipoMuestra();
+
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0)),
+
+                      child: Text("Agregar tipo de muestra",style: TextStyle(color: Colors.white),),
+                    ),
+                  ),
+                )
+              ],
+            ): Container(),
+            addNewTipo ? Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 10),
+
+                  width: double.infinity,
+                  child: RaisedButton(
+                    onPressed: () async{
+                      addTipoMuestra();
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    child: this._selectedSupervisor==null ? Text("Tipo de muestra") :Text("${this._selectedSupervisor}") ,
+                  ),
+                ),
+                isLoaded
+                    ? Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: ListView.builder
+                      (
+                        shrinkWrap: true,
+                        itemCount: subtypesArray.length,
+
+                        itemBuilder: (BuildContext ctxt, int index) {
+                          return Container(
+                            padding: EdgeInsets.only(left: 20,right: 20,top: 5,bottom: 5),
+                            child: RaisedButton(
+                              color: selectedDesplegable==subtypesArray[index] ?  Color(0xff85a335): Colors.white,
+                              onPressed: (){
+                                setState(() {
+                                  selectedDesplegable=subtypesArray[index];
+
+                                });
+
+
+                                List<String> stringTypes = [];
+
+                                SelectedTypes.forEach((element) {
+                                  stringTypes.add(subtypesArray[element]);
+                                });
+
+                                TipoMuestra tipo=TipoMuestra();
+                                tipo.desplegable=selectedDesplegable;
+                                tipo.tipo=_typeTextEdition.text;
+                                muestras.add(tipo);
+
+                                setState(() {
+                                  addNewTipo=false;
+                                });
+
+
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0)),
+                              child: Container(
+                                padding: EdgeInsets.only(top: 5,bottom: 5),
+                                child: Text(subtypesArray[index],style: TextStyle(fontSize: 17,color: selectedDesplegable==subtypesArray[index] ? Colors.white:  Color(0xff85a335)),),
+                              ),
+                            ),
+                          );
+                        }
+                    ))
+                    : Container(),
+              ],
+            ): Container()
+
+
+          ],
+        ),
+      ),
     );
   }
 }
