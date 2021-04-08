@@ -123,6 +123,8 @@ class _muestraDialogState extends State<muestraDialog> {
 
     this._typeTextEdition.text = "${widget.selectedType}";
 
+    muestras=widget.subTypesString;
+
     initDb();
   }
 
@@ -193,7 +195,7 @@ class _muestraDialogState extends State<muestraDialog> {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0)),
           color: Color(0xffFFB74D),
-          onPressed: muestras.length>0 ? (){
+          onPressed: this._selectedSupervisor!=null ? (){
               widget.exportSubtypes(muestras);
           } : null,
           child: Text("Guardar",style: TextStyle(color: Colors.white),),
@@ -279,11 +281,11 @@ class _muestraDialogState extends State<muestraDialog> {
                 ),
                 isLoaded
                     ? Container(
+                  height: 200,
                     margin: EdgeInsets.only(bottom: 10),
                     child: ListView.builder
                       (
-                        shrinkWrap: true,
-                        itemCount: subtypesArray.length,
+                         itemCount: subtypesArray.length,
 
                         itemBuilder: (BuildContext ctxt, int index) {
                           return Container(
