@@ -43,15 +43,14 @@ class _SelectTipoMuestra extends State<SelectTipoMuestra> {
             selectedItem:  widget.selectedItem,
             subControl:  widget.subControl,
             typesArray:  widget.typesArray,
-            subTypesString:  [],
-            selectedType:  "",
+            subTypesString:  widget.muestrasArray.subtypes,
+            selectedType:   widget.muestrasArray.type,
             exportSubtypes: (List<TipoMuestra> muestras) {
               setState(() {
                 widget.muestrasArray.name = "Muestra ${widget.muestra}";
                 widget.muestrasArray.type = muestras[0].tipo;
                 widget.muestrasArray.subtypes = muestras;
               });
-
                Navigator.pop(context, widget.muestrasArray);
             },
           ),

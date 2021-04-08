@@ -237,7 +237,7 @@ class _HistoryPage extends State<HistoryPage>
             if (selected == "Surtido") {
               subControl = 4;
             }
-            if (selected == "ZUNCHO") {
+            if (selected == "Suncho") {
               subControl = 5;
             }
             getAllTypes();
@@ -1553,7 +1553,7 @@ class _HistoryPage extends State<HistoryPage>
                                                                         .start,
                                                                 children: [
                                                                   Text(
-                                                                      "Supervidor",
+                                                                      "Supervisor",
                                                                       style: TextStyle(
                                                                           fontSize:
                                                                               16)),
@@ -1836,6 +1836,9 @@ class _HistoryPage extends State<HistoryPage>
                         muestrasArray = [];
                         flower = "Tipo de flor";
                         varieties = [];
+                        _selectedSupervisor = null;
+                        _selectedColaborador = null;
+                        _selectedAsegurador = null;
                       });
                     },
                     child: Container(
