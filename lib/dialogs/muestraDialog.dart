@@ -274,6 +274,9 @@ print("aquii estoy    ${widget.selectedType}");
                   child: RaisedButton(
                     onPressed: () async{
                       addTipoMuestra();
+                      setState(() {
+                        subtypesArray=[];
+                      });
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
