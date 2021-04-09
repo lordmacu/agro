@@ -120,7 +120,7 @@ class _muestraDialogState extends State<muestraDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+print("aquii estoy    ${widget.selectedType}");
     this._typeTextEdition.text = "${widget.selectedType}";
 
     muestras=widget.subTypesString;
@@ -196,7 +196,8 @@ class _muestraDialogState extends State<muestraDialog> {
               borderRadius: BorderRadius.circular(30.0)),
           color: Color(0xffFFB74D),
           onPressed: this._selectedSupervisor!=null ? (){
-              widget.exportSubtypes(muestras);
+
+              widget.exportSubtypes(muestras,this._selectedSupervisor);
           } : null,
           child: Text("Guardar",style: TextStyle(color: Colors.white),),
         ),
