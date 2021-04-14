@@ -35,6 +35,7 @@ import 'package:sqfly/sqfly.dart';
 import 'package:intl/intl.dart'; //for date format
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:http/http.dart' as http;
+import 'package:auto_size_text/auto_size_text.dart';
 
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key key, this.sede}) : super(key: key);
@@ -1002,7 +1003,7 @@ class _HistoryPage extends State<HistoryPage>
                           ),
                         ),
                         Container(
-                          child: Text("Corte",
+                          child: AutoSizeText("Corte",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
@@ -1062,7 +1063,8 @@ class _HistoryPage extends State<HistoryPage>
                           ),
                         ),
                         Container(
-                          child: Text("Recepción de flores",
+
+                          child: AutoSizeText("Recepción de flores",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
@@ -1117,7 +1119,7 @@ class _HistoryPage extends State<HistoryPage>
                           ),
                         ),
                         Container(
-                          child: Text("Manufactura ramo banda",
+                          child: AutoSizeText("Manufactura ramo banda",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
@@ -1173,7 +1175,7 @@ class _HistoryPage extends State<HistoryPage>
                           ),
                         ),
                         Container(
-                          child: Text("Empaque - Surtido Zuncho",
+                          child: AutoSizeText("Empaque - Surtido Zuncho",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16),
                               textAlign: TextAlign.center),
