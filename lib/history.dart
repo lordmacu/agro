@@ -1004,8 +1004,10 @@ class _HistoryPage extends State<HistoryPage>
                         ),
                         Container(
                           child: AutoSizeText("Corte",
+                              minFontSize: 14,
+                              maxLines: 4,
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                                  fontWeight: FontWeight.bold, fontSize: 14),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
@@ -1065,8 +1067,10 @@ class _HistoryPage extends State<HistoryPage>
                         Container(
 
                           child: AutoSizeText("Recepción de flores",
+                              minFontSize: 14,
+                              maxLines: 4,
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                                  fontWeight: FontWeight.bold, fontSize: 14),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
@@ -1120,8 +1124,10 @@ class _HistoryPage extends State<HistoryPage>
                         ),
                         Container(
                           child: AutoSizeText("Manufactura ramo banda",
+                              minFontSize: 14,
+                              maxLines: 4,
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                                  fontWeight: FontWeight.bold, fontSize: 14),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
@@ -1176,8 +1182,10 @@ class _HistoryPage extends State<HistoryPage>
                         ),
                         Container(
                           child: AutoSizeText("Empaque - Surtido Zuncho",
+                              minFontSize: 14,
+                              maxLines: 4,
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                                  fontWeight: FontWeight.bold, fontSize: 14),
                               textAlign: TextAlign.center),
                           margin: EdgeInsets.only(top: 10),
                         ),
@@ -1433,6 +1441,8 @@ class _HistoryPage extends State<HistoryPage>
                                                               Container(
                                                                 child: AutoSizeText(
                                                                   "Labor: ${getLabor(labores[index])} ",
+                                                                  minFontSize: 14,
+                                                                  maxLines: 4,
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
