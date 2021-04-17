@@ -102,6 +102,9 @@ class _muestraDialogState extends State<muestraDialog> {
           addNewTipo=false;
         });
 
+        if(this._selectedSupervisor== null){
+          this._selectedSupervisor="Ramo conforme";
+        }
         TipoMuestra tipo=TipoMuestra();
         tipo.desplegable="";
         tipo.tipo=this._selectedSupervisor;
