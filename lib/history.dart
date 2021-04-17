@@ -1431,7 +1431,7 @@ class _HistoryPage extends State<HistoryPage>
                                                                     .start,
                                                             children: [
                                                               Container(
-                                                                child: Text(
+                                                                child: AutoSizeText(
                                                                   "Labor: ${getLabor(labores[index])} ",
                                                                   style: TextStyle(
                                                                       fontWeight:
