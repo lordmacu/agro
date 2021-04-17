@@ -221,9 +221,7 @@ print("aquii estoy    ${widget.selectedType}");
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Container(
-              child: Text("asdfasd ${addNewTipo}"),
-            ),
+
             !addNewTipo ? Expanded(child: Container(
 
               child: Column(
