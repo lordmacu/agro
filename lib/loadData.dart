@@ -46,7 +46,7 @@ class LoadDataPage extends StatefulWidget {
 }
 
 class _LoadDataPagePage extends State<LoadDataPage> {
-  String url = "http://18.231.155.101";
+  String url = "https://calidad.smartcompanies.com.co";
 
   bool isgetDropdowns = false;
   bool isgetControls = false;
