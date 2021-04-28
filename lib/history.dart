@@ -549,7 +549,7 @@ class _HistoryPage extends State<HistoryPage>
     print(formatted);*/
   }
 
-  String url = "http://18.231.155.101";
+  String url = "https://calidad.smartcompanies.com.co";
 
   loadDataServer() async {
     var client = http.Client();
