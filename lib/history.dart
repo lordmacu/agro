@@ -663,6 +663,8 @@ class _HistoryPage extends State<HistoryPage>
               )),
     );
 
+
+    print("aqui se carga ${result}");
     if (result != null) {
       muestrasArray[muestra] = result;
       print("aqui este es el resultado ${muestrasArray}");

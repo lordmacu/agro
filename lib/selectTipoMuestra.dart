@@ -26,6 +26,9 @@ class _SelectTipoMuestra extends State<SelectTipoMuestra> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+
+    print("aqui esta ${widget.muestrasArray}");
   }
 
   @override
@@ -46,6 +49,8 @@ class _SelectTipoMuestra extends State<SelectTipoMuestra> {
             subTypesString:  widget.muestrasArray.subtypes,
             selectedType:   widget.muestrasArray.type,
             exportSubtypes: (List<TipoMuestra> muestras,String type) {
+
+
 
 
               setState(() {

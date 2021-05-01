@@ -54,6 +54,7 @@ class _muestraDialogState extends State<muestraDialog> {
   bool isLoaded = false;
 
   bool addNewTipo = false;
+  bool addMoreTypes=true;
   var sqfly = null;
   List<TipoMuestra> muestras = [];
 
@@ -61,6 +62,9 @@ class _muestraDialogState extends State<muestraDialog> {
     if (index != 0) {
       isLoaded = false;
       List<String> subtypesArrayLocal = [];
+
+
+      print("aquii selected item    ${widget.selectedItem}");
 
       if (widget.selectedItem == 4) {
         List<Dropdown> controls = await sqfly<DropdownDao>().where({
@@ -90,17 +94,24 @@ class _muestraDialogState extends State<muestraDialog> {
       }
 
       if (subtypesArrayLocal.length == 0) {
-        setState(() {
-          addNewTipo = false;
-        });
 
-        if (this._selectedSupervisor == null) {
-          this._selectedSupervisor = "Ramo conforme";
+        if(muestras.length>0){
+          if(muestras[0].tipo!="Ramo conforme"){
+            setState(() {
+              addNewTipo = false;
+            });
+
+            if (this._selectedSupervisor == null) {
+              this._selectedSupervisor = "Ramo conforme";
+            }
+            TipoMuestra tipo = TipoMuestra();
+            tipo.desplegable = "";
+            tipo.tipo = this._selectedSupervisor;
+            muestras.add(tipo);
+          }
         }
-        TipoMuestra tipo = TipoMuestra();
-        tipo.desplegable = "";
-        tipo.tipo = this._selectedSupervisor;
-        muestras.add(tipo);
+
+
       }
 
       print("aquii ${addNewTipo}  ${subtypesArrayLocal.length}");
@@ -127,10 +138,18 @@ class _muestraDialogState extends State<muestraDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("aquii estoy    ${widget.selectedType}");
     this._typeTextEdition.text = "${widget.selectedType}";
 
     muestras = widget.subTypesString;
+
+
+
+
+    if(muestras.length>0){
+      setState(() {
+        addMoreTypes=false;
+      });
+    }
 
     initDb();
   }
@@ -203,7 +222,16 @@ class _muestraDialogState extends State<muestraDialog> {
           color: Color(0xffFFB74D),
           onPressed: this._selectedSupervisor != null
               ? () {
-                  widget.exportSubtypes(muestras, this._selectedSupervisor);
+
+            if(this._selectedSupervisor=="Ramo conforme"){
+              TipoMuestra tipo = TipoMuestra();
+              tipo.desplegable =
+                  null;
+              tipo.tipo = "Ramo conforme";
+              muestras.add(tipo);
+            }
+
+                widget.exportSubtypes(muestras, this._selectedSupervisor);
                 }
               : null,
           child: Text(
@@ -226,6 +254,11 @@ class _muestraDialogState extends State<muestraDialog> {
                             child: ListView.builder(
                                 itemCount: muestras.length,
                                 itemBuilder: (BuildContext ctxt, int index) {
+
+                                  if(muestras[index].tipo=="Ramo conforme"){
+                                    addMoreTypes=false;
+
+                                  }
                                   return Container(
                                     margin: EdgeInsets.only(bottom: 10),
                                     child: Card(
@@ -242,28 +275,14 @@ class _muestraDialogState extends State<muestraDialog> {
                                               "${muestras[index].tipo} - ${muestras[index].desplegable}",
                                               style: TextStyle(fontSize: 18),
                                             )),
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  muestras.removeAt(index);
-                                                });
-                                              },
-                                              child: Container(
-                                                margin:
-                                                    EdgeInsets.only(left: 10),
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.redAccent,
-                                                ),
-                                              ),
-                                            )
+
                                           ],
                                         ),
                                       ),
                                     ),
                                   );
                                 })),
-                        Container(
+                        addMoreTypes? Container(
                           margin: EdgeInsets.only(bottom: 20, top: 0),
                           child: Container(
                             child: RaisedButton(
@@ -285,7 +304,7 @@ class _muestraDialogState extends State<muestraDialog> {
                               ),
                             ),
                           ),
-                        )
+                        ): Container()
                       ],
                     ),
                   ))
