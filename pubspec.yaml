@@ -32,7 +32,7 @@ dependencies:
   toast: ^0.1.5
   shared_preferences: ^2.0.5
   http: 0.12.2
-  sqfly: ^1.0.0-alpha.1
+  sqfly: ^1.0.0-alpha.2
 
   flutter_typeahead: ^2.0.0
   rflutter_alert: ^1.0.6
