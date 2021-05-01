@@ -485,6 +485,8 @@ class _HistoryPage extends State<HistoryPage>
                 child: RaisedButton(
                   color: Color(0xffFFB74D),
                   onPressed: () {
+
+                    print("asdfasdf asd ${selectedItem}");
                     if (selectedItem == 6) {
                       if (this._formKey.currentState.validate()) {
                         this._formKey.currentState.save();
@@ -499,9 +501,14 @@ class _HistoryPage extends State<HistoryPage>
                       }
                     } else {
                       if (flower != "Tipo de flor") {
-                        if (this._formKey.currentState.validate()) {
-                          this._formKey.currentState.save();
-                          gonext();
+                        if (selectedVariety != 'Variedad') {
+                          if(block!='Bloque'){
+                            if (this._formKey.currentState.validate()) {
+                              this._formKey.currentState.save();
+                              gonext();
+                            }
+                          }
+
                         }
                       }
                     }
@@ -760,41 +767,45 @@ class _HistoryPage extends State<HistoryPage>
                 child: RaisedButton(
                   color: Color(0xffFFB74D),
                   onPressed: () {
-                    Labor labor = Labor();
-                    labor.comments = jsonEncode(selectedComments);
-                    labor.muestras =
-                        jsonEncode(formatMuestrasArray(muestrasArray));
-                    labor.flowerType = flower;
-                    labor.blocks = block;
-                    labor.asegurator = _selectedAsegurador;
-                    labor.colaborator = _selectedColaborador;
-                    labor.supervisor = _selectedSupervisor;
-                    labor.process = selectedItem;
-                    labor.variety = selectedVariety;
-                    labor.state = 0;
-                    labor.subProcess = subControl;
-                    labor.date = DateTime.now().toString();
 
-                    sqfly<LaborDao>().create(labor); // insertAll
+                   if(muestrasCount>0){
+                      Labor labor = Labor();
+                      labor.comments = jsonEncode(selectedComments);
+                      labor.muestras =
+                          jsonEncode(formatMuestrasArray(muestrasArray));
+                      labor.flowerType = flower;
+                      labor.blocks = block;
+                      labor.asegurator = _selectedAsegurador;
+                      labor.colaborator = _selectedColaborador;
+                      labor.supervisor = _selectedSupervisor;
+                      labor.process = selectedItem;
+                      labor.variety = selectedVariety;
+                      labor.state = 0;
+                      labor.subProcess = subControl;
+                      labor.date = DateTime.now().toString();
 
-                    getAllLabores();
+                      sqfly<LaborDao>().create(labor); // insertAll
 
-                    setState(() {
-                      _selectedSupervisor = null;
-                      _selectedColaborador = null;
-                      _selectedAsegurador = null;
-                      block = "Bloque";
-                      flower = "Tipo de flor";
-                      muestrasArray = [];
-                      selectedComments = [];
-                      selectedButtons = [];
-                      currentStep = 0;
-                      selectedItem = 0;
-                      muestrasCount = 0;
-                    });
+                      getAllLabores();
 
-                    _panelController.close();
-                    loadDataServer();
+                      setState(() {
+                        _selectedSupervisor = null;
+                        _selectedColaborador = null;
+                        _selectedAsegurador = null;
+                        block = "Bloque";
+                        flower = "Tipo de flor";
+                        muestrasArray = [];
+                        selectedComments = [];
+                        selectedButtons = [];
+                        currentStep = 0;
+                        selectedItem = 0;
+                        muestrasCount = 0;
+                      });
+
+                      _panelController.close();
+                      loadDataServer();
+                    }
+
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)),
@@ -895,39 +906,62 @@ class _HistoryPage extends State<HistoryPage>
                       child: RaisedButton(
                         color: Color(0xffFFB74D),
                         onPressed: () {
-                          Labor labor = Labor();
-                          labor.comments = jsonEncode(selectedComments);
-                          labor.muestras = jsonEncode(muestrasArray);
-                          labor.flowerType = flower;
-                          labor.blocks = block;
-                          labor.asegurator = _selectedAsegurador;
-                          labor.colaborator = _selectedColaborador;
-                          labor.supervisor = _selectedSupervisor;
-                          labor.process = selectedItem;
-                          labor.subProcess = subControl;
-                          labor.date = DateTime.now().toString();
-                          labor.state = 0;
 
-                          sqfly<LaborDao>().create(labor); // insertAll
+                          print("asdfasdf");
 
-                          getAllLabores();
+                          if(muestrasCount>0){
+                            Labor labor = Labor();
+                            labor.comments = jsonEncode(selectedComments);
+                            labor.muestras = jsonEncode(muestrasArray);
+                            labor.flowerType = flower;
+                            labor.blocks = block;
+                            labor.asegurator = _selectedAsegurador;
+                            labor.colaborator = _selectedColaborador;
+                            labor.supervisor = _selectedSupervisor;
+                            labor.process = selectedItem;
+                            labor.subProcess = subControl;
+                            labor.date = DateTime.now().toString();
+                            labor.state = 0;
 
-                          setState(() {
-                            _selectedSupervisor = null;
-                            _selectedColaborador = null;
-                            _selectedAsegurador = null;
-                            block = "Bloque";
-                            flower = "Tipo de flor";
-                            muestrasArray = [];
-                            selectedComments = [];
-                            selectedButtons = [];
-                            currentStep = 0;
-                            selectedItem = 0;
-                            muestrasCount = 0;
-                          });
+                            sqfly<LaborDao>().create(labor); // insertAll
 
-                          _panelController.close();
-                          loadDataServer();
+                            getAllLabores();
+
+                            setState(() {
+                              _selectedSupervisor = null;
+                              _selectedColaborador = null;
+                              _selectedAsegurador = null;
+                              block = "Bloque";
+                              flower = "Tipo de flor";
+                              muestrasArray = [];
+                              selectedComments = [];
+                              selectedButtons = [];
+                              currentStep = 0;
+                              selectedItem = 0;
+                              muestrasCount = 0;
+                            });
+
+                            _panelController.close();
+                            loadDataServer();
+                          }else{
+                            Alert(
+                              context: context,
+                              type: AlertType.error,
+                              title: "Ingresar muestra",
+                              desc: "Por favor agrega al menos una muestra",
+                              buttons: [
+                                DialogButton(
+                                  child: Text(
+                                    "Aceptar",
+                                    style: TextStyle(color: Colors.white, fontSize: 20),
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                  width: 120,
+                                )
+                              ],
+                            ).show();
+                          }
+
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0)),
