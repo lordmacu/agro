@@ -356,7 +356,7 @@ packages:
       name: sqfly
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0-alpha.1"
+    version: "1.0.0-alpha.2"
   stack_trace:
     dependency: transitive
     description:
