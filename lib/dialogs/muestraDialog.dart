@@ -30,7 +30,7 @@ class muestraDialog extends StatefulWidget {
   muestraDialog(
       {this.flower,
       this.sede_id,
-        this.subControl,
+      this.subControl,
       this.selectedItem,
       this.typesArray,
       this.exportSubtypes,
@@ -53,26 +53,19 @@ class _muestraDialogState extends State<muestraDialog> {
 
   bool isLoaded = false;
 
-  bool addNewTipo=false;
+  bool addNewTipo = false;
   var sqfly = null;
-  List<TipoMuestra> muestras=[];
-
-
+  List<TipoMuestra> muestras = [];
 
   getAllSubtypesByType(name, index) async {
-
     if (index != 0) {
-
-
       isLoaded = false;
       List<String> subtypesArrayLocal = [];
 
-
-
-      if(widget.selectedItem==4){
+      if (widget.selectedItem == 4) {
         List<Dropdown> controls = await sqfly<DropdownDao>().where({
           'name': '${name}',
-           'sede_id': widget.sede_id,
+          'sede_id': widget.sede_id,
 
           //  'flower_id': flower.id,
           'process_id': widget.subControl
@@ -81,8 +74,7 @@ class _muestraDialogState extends State<muestraDialog> {
         controls.forEach((element) {
           subtypesArrayLocal.add(element.desplegable);
         });
-
-      }else{
+      } else {
         Flowers flower = await sqfly<FlowerDao>()
             .findBy({'name': '${widget.flower}', 'sede_id': widget.sede_id});
         List<Dropdown> control = await sqfly<DropdownDao>().where({
@@ -97,19 +89,18 @@ class _muestraDialogState extends State<muestraDialog> {
         });
       }
 
-      if(subtypesArrayLocal.length==0){
+      if (subtypesArrayLocal.length == 0) {
         setState(() {
-          addNewTipo=false;
+          addNewTipo = false;
         });
 
-        if(this._selectedSupervisor== null){
-          this._selectedSupervisor="Ramo conforme";
+        if (this._selectedSupervisor == null) {
+          this._selectedSupervisor = "Ramo conforme";
         }
-        TipoMuestra tipo=TipoMuestra();
-        tipo.desplegable="";
-        tipo.tipo=this._selectedSupervisor;
+        TipoMuestra tipo = TipoMuestra();
+        tipo.desplegable = "";
+        tipo.tipo = this._selectedSupervisor;
         muestras.add(tipo);
-
       }
 
       print("aquii ${addNewTipo}  ${subtypesArrayLocal.length}");
@@ -136,16 +127,16 @@ class _muestraDialogState extends State<muestraDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-print("aquii estoy    ${widget.selectedType}");
+    print("aquii estoy    ${widget.selectedType}");
     this._typeTextEdition.text = "${widget.selectedType}";
 
-    muestras=widget.subTypesString;
+    muestras = widget.subTypesString;
 
     initDb();
   }
 
   Future initDb() async {
-    sqfly = await Sqfly(
+    sqfly = await Sqfly.initialize(
       /// database named
       name: 'datdacdddddddddddsdddsdd',
       // database version
@@ -153,32 +144,32 @@ print("aquii estoy    ${widget.selectedType}");
       logger: false,
 
       daos: [DropdownDao(), ControlDao(), FlowerDao()],
-    ).init();
+    );
+
     if (widget.selectedType.length > 0) {
       getAllSubtypesByType(widget.selectedType, widget.selectedValue);
     }
   }
 
-  addTipoMuestra() async{
+  addTipoMuestra() async {
     setState(() {
       isLoaded = false;
-
     });
     final result = await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
-      MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: widget.typesArray)),
+      MaterialPageRoute(
+          builder: (context) => ListPeople(listPeopleArray: widget.typesArray)),
     );
 
-    if(result!=null){
-
+    if (result != null) {
       setState(() {
         isLoaded = true;
 
         SelectedTypes = [];
         widget.subTypesString = [];
 
-        this._selectedSupervisor=result;
+        this._selectedSupervisor = result;
       });
 
       this._selectedType = result;
@@ -186,13 +177,11 @@ print("aquii estoy    ${widget.selectedType}");
       var valorIndex = widget.typesArray.indexOf(result);
 
       getAllSubtypesByType(result, valorIndex);
-
-    }else{
+    } else {
       setState(() {
         this._typeTextEdition.text = "";
 
         this._selectedType = "";
-
 
         this._typeTextEdition.clear();
         isLoaded = false;
@@ -207,16 +196,20 @@ print("aquii estoy    ${widget.selectedType}");
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Container(
-        padding: EdgeInsets.only(left: 20,right: 20,bottom: 10),
+        padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
         child: RaisedButton(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
           color: Color(0xffFFB74D),
-          onPressed: this._selectedSupervisor!=null ? (){
-
-              widget.exportSubtypes(muestras,this._selectedSupervisor);
-          } : null,
-          child: Text("Guardar",style: TextStyle(color: Colors.white),),
+          onPressed: this._selectedSupervisor != null
+              ? () {
+                  widget.exportSubtypes(muestras, this._selectedSupervisor);
+                }
+              : null,
+          child: Text(
+            "Guardar",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
       body: Container(
@@ -224,138 +217,163 @@ print("aquii estoy    ${widget.selectedType}");
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-
-            !addNewTipo ? Expanded(child: Container(
-
-              child: Column(
-                children: [
-                  Expanded(child: ListView.builder
-                    (
-
-                      itemCount: muestras.length,
-
-                      itemBuilder: (BuildContext ctxt, int index) {
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          child: Card(
-                            child: Container(
-                              padding: EdgeInsets.only(left: 15,right: 15,top: 10,bottom: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(child: Text("${muestras[index].tipo} - ${muestras[index].desplegable}",style: TextStyle(fontSize: 18),)),
-                                  InkWell(
-                                    onTap: (){
-                                      setState(() {
-                                        muestras.removeAt(index);
-                                      });
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.only(left: 10),
-                                      child: Icon(Icons.delete,color: Colors.redAccent,),
+            !addNewTipo
+                ? Expanded(
+                    child: Container(
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: ListView.builder(
+                                itemCount: muestras.length,
+                                itemBuilder: (BuildContext ctxt, int index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    child: Card(
+                                      child: Container(
+                                        padding: EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            top: 10,
+                                            bottom: 10),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                                child: Text(
+                                              "${muestras[index].tipo} - ${muestras[index].desplegable}",
+                                              style: TextStyle(fontSize: 18),
+                                            )),
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  muestras.removeAt(index);
+                                                });
+                                              },
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.redAccent,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                  )),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 20, top: 0),
-                    child:Container(
-                      child: RaisedButton(
-                        color:Color(0xff85a335) ,
-                        onPressed: (){
-                          setState(() {
-                            addNewTipo=!addNewTipo;
-                            subtypesArray=[];
-                            this._selectedSupervisor=null;
-                          });
-
-                          addTipoMuestra();
-
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0)),
-
-                        child: Text("Agregar tipo de muestra",style: TextStyle(color: Colors.white),),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )): Container(),
-            addNewTipo ? Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 10),
-
-                  width: double.infinity,
-                  child: RaisedButton(
-                    onPressed: () async{
-                      addTipoMuestra();
-                      setState(() {
-                        subtypesArray=[];
-                      });
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: this._selectedSupervisor==null ? Text("Tipo de muestra") :Text("${this._selectedSupervisor}") ,
-                  ),
-                ),
-                isLoaded
-                    ? Container(
-                  height: 200,
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: ListView.builder
-                      (
-                         itemCount: subtypesArray.length,
-
-                        itemBuilder: (BuildContext ctxt, int index) {
-                          return Container(
-                            padding: EdgeInsets.only(left: 20,right: 20,top: 5,bottom: 5),
+                                  );
+                                })),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20, top: 0),
+                          child: Container(
                             child: RaisedButton(
-                              color: selectedDesplegable==subtypesArray[index] ?  Color(0xff85a335): Colors.white,
-                              onPressed: (){
+                              color: Color(0xff85a335),
+                              onPressed: () {
                                 setState(() {
-                                  selectedDesplegable=subtypesArray[index];
-
+                                  addNewTipo = !addNewTipo;
+                                  subtypesArray = [];
+                                  this._selectedSupervisor = null;
                                 });
 
-
-                                List<String> stringTypes = [];
-
-                                SelectedTypes.forEach((element) {
-                                  stringTypes.add(subtypesArray[element]);
-                                });
-
-                                TipoMuestra tipo=TipoMuestra();
-                                tipo.desplegable=selectedDesplegable;
-                                tipo.tipo=_typeTextEdition.text;
-                                muestras.add(tipo);
-
-                                setState(() {
-                                  addNewTipo=false;
-                                });
-
-
+                                addTipoMuestra();
                               },
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30.0)),
-                              child: Container(
-                                padding: EdgeInsets.only(top: 5,bottom: 5),
-                                child: Text(subtypesArray[index],style: TextStyle(fontSize: 17,color: selectedDesplegable==subtypesArray[index] ? Colors.white:  Color(0xff85a335)),),
+                              child: Text(
+                                "Agregar tipo de muestra",
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
-                          );
-                        }
-                    ))
-                    : Container(),
-              ],
-            ): Container()
+                          ),
+                        )
+                      ],
+                    ),
+                  ))
+                : Container(),
+            addNewTipo
+                ? Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        width: double.infinity,
+                        child: RaisedButton(
+                          onPressed: () async {
+                            addTipoMuestra();
+                            setState(() {
+                              subtypesArray = [];
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0)),
+                          child: this._selectedSupervisor == null
+                              ? Text("Tipo de muestra")
+                              : Text("${this._selectedSupervisor}"),
+                        ),
+                      ),
+                      isLoaded
+                          ? Container(
+                              height: 200,
+                              margin: EdgeInsets.only(bottom: 10),
+                              child: ListView.builder(
+                                  itemCount: subtypesArray.length,
+                                  itemBuilder: (BuildContext ctxt, int index) {
+                                    return Container(
+                                      padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 5,
+                                          bottom: 5),
+                                      child: RaisedButton(
+                                        color: selectedDesplegable ==
+                                                subtypesArray[index]
+                                            ? Color(0xff85a335)
+                                            : Colors.white,
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedDesplegable =
+                                                subtypesArray[index];
+                                          });
 
+                                          List<String> stringTypes = [];
 
+                                          SelectedTypes.forEach((element) {
+                                            stringTypes
+                                                .add(subtypesArray[element]);
+                                          });
+
+                                          TipoMuestra tipo = TipoMuestra();
+                                          tipo.desplegable =
+                                              selectedDesplegable;
+                                          tipo.tipo = _typeTextEdition.text;
+                                          muestras.add(tipo);
+
+                                          setState(() {
+                                            addNewTipo = false;
+                                          });
+                                        },
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30.0)),
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              top: 5, bottom: 5),
+                                          child: Text(
+                                            subtypesArray[index],
+                                            style: TextStyle(
+                                                fontSize: 17,
+                                                color: selectedDesplegable ==
+                                                        subtypesArray[index]
+                                                    ? Colors.white
+                                                    : Color(0xff85a335)),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }))
+                          : Container(),
+                    ],
+                  )
+                : Container()
           ],
         ),
       ),

@@ -9,7 +9,7 @@ import 'package:agrotest/daos/LaborDao.dart';
 import 'package:agrotest/daos/ProcesesDao.dart';
 import 'package:agrotest/daos/SedesDao.dart';
 import 'package:agrotest/daos/VaritiesDao.dart';
- import 'package:agrotest/login.dart';
+import 'package:agrotest/login.dart';
 import 'package:agrotest/mock.dart';
 import 'package:agrotest/models/Comments.dart';
 import 'package:agrotest/models/Controls.dart';
@@ -61,21 +61,15 @@ class _LoadDataPagePage extends State<LoadDataPage> {
   void initState() {
     //   loadData();
 
-
-
     checkCreation();
   }
 
   checkCreation() async {
-
-
-
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoadedTables = await prefs.getBool("loadGDddddddedfdfddneddradl1sd");
     _onLoading();
     if (isLoadedTables == null) {
-       loadData();
+      loadData();
     } else {
       Navigator.push(
         context,
@@ -90,7 +84,6 @@ class _LoadDataPagePage extends State<LoadDataPage> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Dialog(
-
           backgroundColor: Colors.white.withOpacity(0.1),
           elevation: 0,
           child: Container(
@@ -101,20 +94,21 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 new CircularProgressIndicator(),
                 Container(
                   margin: EdgeInsets.only(left: 10),
-                  child: Text("Cargando" ,style: TextStyle(color: Colors.white),),
+                  child: Text(
+                    "Cargando",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 )
               ],
             ),
-          ) ,
+          ),
         );
       },
     );
-
   }
 
   Future loadData() async {
-
-    final sqfly = await Sqfly(
+    final sqfly = await Sqfly.initialize(
       /// database named
       name: 'datdacdddddddddddsdddsdd',
       // database version
@@ -132,7 +126,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
         VaritiesDao(),
         LaborDao()
       ],
-    ).init();
+    );
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -152,8 +146,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
       employs.add(dropdown);
     }
 
-
-     sqfly<EmployeeDao>().createAll(employs); // insertAll
+    sqfly<EmployeeDao>().createAll(employs); // insertAll
 
     //await DB.saveEmploys(employs);
 
@@ -166,35 +159,34 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
     List<Dropdown> dropArray = [];
     for (var i = 0; i < response.length; i++) {
+      try {
+        Dropdown dropdown = Dropdown();
+        if (response[i]["flower_id"] == "") {
+          dropdown.flowerId = 0;
+        } else {
+          dropdown.flowerId = int.parse(response[i]["flower_id"]);
+        }
 
-      try{
-      Dropdown dropdown = Dropdown();
-      if (response[i]["flower_id"] == "") {
-        dropdown.flowerId = 0;
-      } else {
-        dropdown.flowerId = int.parse(response[i]["flower_id"]);
-      }
-
-      if (response[i]["desplegable"] == "") {
-        dropdown.desplegable = "0";
-      } else {
-        dropdown.desplegable = response[i]["desplegable"];
-      }
-      dropdown.processId = int.parse(response[i]["process_id"]);
-      dropdown.itemId = int.parse(response[i]["item_id"]);
-      dropdown.sedeId = int.parse(response[i]["sede_id"]);
-      dropdown.name = (response[i]["item"]["name"]);
-      dropdown.process = (response[i]["process"]["name"]);
-      dropArray.add(dropdown);
-      }catch(e){
-          print("aquiii esta el error mano ${response[i]}");
+        if (response[i]["desplegable"] == "") {
+          dropdown.desplegable = "0";
+        } else {
+          dropdown.desplegable = response[i]["desplegable"];
+        }
+        dropdown.processId = int.parse(response[i]["process_id"]);
+        dropdown.itemId = int.parse(response[i]["item_id"]);
+        dropdown.sedeId = int.parse(response[i]["sede_id"]);
+        dropdown.name = (response[i]["item"]["name"]);
+        dropdown.process = (response[i]["process"]["name"]);
+        dropArray.add(dropdown);
+      } catch (e) {
+        print("aquiii esta el error mano ${response[i]}");
       }
     }
 
     print("total  ${dropArray}");
-   sqfly<DropdownDao>().createAll(dropArray); // insertAll
+    sqfly<DropdownDao>().createAll(dropArray); // insertAll
 
-   // await DB.saveDropdowns(dropArray);
+    // await DB.saveDropdowns(dropArray);
 
     setState(() {
       isgetDropdowns = true;
@@ -216,10 +208,9 @@ class _LoadDataPagePage extends State<LoadDataPage> {
       controlsArray.add(dropdown);
     }
 
-
     sqfly<ControlDao>().createAll(controlsArray); // insertAll
 
-  //  await DB.saveControls(controlsArray);
+    //  await DB.saveControls(controlsArray);
 
     setState(() {
       isgetControls = true;
@@ -239,7 +230,6 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
     sqfly<CommentDao>().createAll(comments); // insertAll
 
-
     setState(() {
       isgetComments = true;
     });
@@ -258,8 +248,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
     //await DB.saveFlowers(flowersArray);
 
-
-     setState(() {
+    setState(() {
       isgetFlowers = true;
     });
 
@@ -276,7 +265,7 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
     sqfly<ProcesesDao>().createAll(processArray); // insertAll
 
-   // await DB.saveProcesess(processArray);
+    // await DB.saveProcesess(processArray);
 
     setState(() {
       isgetProceses = true;
@@ -314,13 +303,12 @@ class _LoadDataPagePage extends State<LoadDataPage> {
     }
     sqfly<VaritiesDao>().createAll(varietiesArray); // insertAll
 
-
-
     setState(() {
       isgetVarities = true;
     });
 
-    bool isLoadedTables = await prefs.setBool("loadGDddddddedfdfddneddradl1sd",true);
+    bool isLoadedTables =
+        await prefs.setBool("loadGDddddddedfdfddneddradl1sd", true);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),
@@ -360,10 +348,15 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Desplegables",style: TextStyle(color: Colors.white)),
+                  Text("Desplegables", style: TextStyle(color: Colors.white)),
                   Container(
                     margin: EdgeInsets.only(left: 10),
-                    child: isgetDropdowns ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
+                    child: isgetDropdowns
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
                   )
                 ],
               ),
@@ -375,10 +368,15 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Controles",style: TextStyle(color: Colors.white)),
-                   Container(
+                  Text("Controles", style: TextStyle(color: Colors.white)),
+                  Container(
                     margin: EdgeInsets.only(left: 10),
-                    child: isgetControls ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
+                    child: isgetControls
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
                   )
                 ],
               ),
@@ -390,10 +388,15 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Comentarios" ,style: TextStyle(color: Colors.white)),
-                   Container(
+                  Text("Comentarios", style: TextStyle(color: Colors.white)),
+                  Container(
                     margin: EdgeInsets.only(left: 10),
-                    child: isgetComments ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
+                    child: isgetComments
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
                   )
                 ],
               ),
@@ -405,25 +408,15 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Flores" ,style: TextStyle(color: Colors.white)),
-                   Container(
+                  Text("Flores", style: TextStyle(color: Colors.white)),
+                  Container(
                     margin: EdgeInsets.only(left: 10),
-                    child: isgetFlowers ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
-                  )
-                ],
-              ), Container(
-                child: null,
-                height: 10,
-              ),
-
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("procesos" ,style: TextStyle(color: Colors.white)),
-                   Container(
-                    margin: EdgeInsets.only(left: 10),
-                    child: isgetProceses ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
+                    child: isgetFlowers
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
                   )
                 ],
               ),
@@ -435,10 +428,15 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("sedes" ,style: TextStyle(color: Colors.white)),
-                   Container(
+                  Text("procesos", style: TextStyle(color: Colors.white)),
+                  Container(
                     margin: EdgeInsets.only(left: 10),
-                    child: isgetSedes ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
+                    child: isgetProceses
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
                   )
                 ],
               ),
@@ -450,10 +448,15 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("variedades" ,style: TextStyle(color: Colors.white)),
-                   Container(
+                  Text("sedes", style: TextStyle(color: Colors.white)),
+                  Container(
                     margin: EdgeInsets.only(left: 10),
-                    child: isgetVarities ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
+                    child: isgetSedes
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
                   )
                 ],
               ),
@@ -465,10 +468,35 @@ class _LoadDataPagePage extends State<LoadDataPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("empleados" ,style: TextStyle(color: Colors.white)),
-                   Container(
+                  Text("variedades", style: TextStyle(color: Colors.white)),
+                  Container(
                     margin: EdgeInsets.only(left: 10),
-                    child: isgetEmployee ? Text("Ok",style: TextStyle(color: Colors.white),) : Text("...",style: TextStyle(color: Colors.white)),
+                    child: isgetVarities
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
+                  )
+                ],
+              ),
+              Container(
+                child: null,
+                height: 10,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("empleados", style: TextStyle(color: Colors.white)),
+                  Container(
+                    margin: EdgeInsets.only(left: 10),
+                    child: isgetEmployee
+                        ? Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : Text("...", style: TextStyle(color: Colors.white)),
                   )
                 ],
               )

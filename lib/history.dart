@@ -86,7 +86,7 @@ class _HistoryPage extends State<HistoryPage>
   List<Labor> actualLabores = [];
 
   Future initDb() async {
-    sqfly = await Sqfly(
+    sqfly = await Sqfly.initialize(
       /// database named
       name: 'datdacdddddddddddsdddsdd',
       // database version
@@ -101,14 +101,14 @@ class _HistoryPage extends State<HistoryPage>
         CommentDao(),
         LaborDao(),
       ],
-    ).init();
+    );
 
     getAllEmploys();
   }
 
   @override
   void initState() {
-    sede_id= widget.sede;
+    sede_id = widget.sede;
 
     print("esta es la sede final ${sede_id}");
     _passwordVisible = false;
@@ -205,13 +205,12 @@ class _HistoryPage extends State<HistoryPage>
     List<Flowers> flowers = await sqfly<FlowerDao>()
         .where({'sede_id': '${sede_id}', 'name': '${flower}'}).toList();
     var allVariess =
-    await sqfly<VaritiesDao>().where({"flower_id": flowers[0].id}).toList();
+        await sqfly<VaritiesDao>().where({"flower_id": flowers[0].id}).toList();
     setState(() {
-      selectedVariety="Variedad";
+      selectedVariety = "Variedad";
 
-      varieties=allVariess;
+      varieties = allVariess;
     });
-
   }
 
   showPickerItemControl(BuildContext context) async {
@@ -291,92 +290,93 @@ class _HistoryPage extends State<HistoryPage>
             key: _formKey,
             child: Column(
               children: [
-
                 Container(
                   margin: EdgeInsets.only(bottom: 20),
-
                   width: double.infinity,
                   child: RaisedButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       final result = await Navigator.push(
                         context,
                         // Create the SelectionScreen in the next step.
-                        MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: suggestionsSupervisor)),
+                        MaterialPageRoute(
+                            builder: (context) => ListPeople(
+                                listPeopleArray: suggestionsSupervisor)),
                       );
-                        if(result!=null){
-                          setState(() {
-                            this._selectedSupervisor=result;
-                          });
-
-                        }else{
-                          setState(() {
-                            this._selectedSupervisor=null;
-                          });
-
-                        }
-                    },
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: this._selectedSupervisor==null ? Text("Supervisor") :Text("${this._selectedSupervisor}") ,
-                  ),
-                ),
-
-                Container(
-                  margin: EdgeInsets.only(bottom: 20),
-
-                  width: double.infinity,
-                  child: RaisedButton(
-                    onPressed: () async{
-                      final result = await Navigator.push(
-                        context,
-                        // Create the SelectionScreen in the next step.
-                        MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: suggestions)),
-                      );
-                      if(result!=null){
+                      if (result != null) {
                         setState(() {
-                          this._selectedColaborador=result;
+                          this._selectedSupervisor = result;
                         });
-
-                      }else{
+                      } else {
                         setState(() {
-                          this._selectedColaborador=null;
+                          this._selectedSupervisor = null;
                         });
-
                       }
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
-                    child: this._selectedColaborador==null ? Text("Colaborador") :Text("${this._selectedColaborador}") ,
+                    child: this._selectedSupervisor == null
+                        ? Text("Supervisor")
+                        : Text("${this._selectedSupervisor}"),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(bottom: 20),
                   width: double.infinity,
                   child: RaisedButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       final result = await Navigator.push(
                         context,
                         // Create the SelectionScreen in the next step.
-                        MaterialPageRoute(builder: (context) => ListPeople(listPeopleArray: suggestions)),
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ListPeople(listPeopleArray: suggestions)),
                       );
-                      if(result!=null){
+                      if (result != null) {
                         setState(() {
-                          this._selectedAsegurador=result;
+                          this._selectedColaborador = result;
                         });
-
-                      }else{
+                      } else {
                         setState(() {
-                          this._selectedAsegurador=null;
+                          this._selectedColaborador = null;
                         });
-
                       }
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0)),
-                    child: this._selectedAsegurador==null ? Text("Asegurador") :Text("${this._selectedAsegurador}") ,
+                    child: this._selectedColaborador == null
+                        ? Text("Colaborador")
+                        : Text("${this._selectedColaborador}"),
                   ),
                 ),
-
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  width: double.infinity,
+                  child: RaisedButton(
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                        context,
+                        // Create the SelectionScreen in the next step.
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ListPeople(listPeopleArray: suggestions)),
+                      );
+                      if (result != null) {
+                        setState(() {
+                          this._selectedAsegurador = result;
+                        });
+                      } else {
+                        setState(() {
+                          this._selectedAsegurador = null;
+                        });
+                      }
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    child: this._selectedAsegurador == null
+                        ? Text("Asegurador")
+                        : Text("${this._selectedAsegurador}"),
+                  ),
+                ),
                 selectedItem == 4
                     ? Container(
                         child: RaisedButton(
@@ -404,54 +404,55 @@ class _HistoryPage extends State<HistoryPage>
                         children: [
                           selectedItem < 3
                               ? RaisedButton(
-                            color: block == "Bloque"
-                                ? Colors.grey
-                                : Color(0xff85a335),
-                            onPressed: () {
-                              showPickerBlocks(context);
-                            },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Text(
-                              "${block}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )
+                                  color: block == "Bloque"
+                                      ? Colors.grey
+                                      : Color(0xff85a335),
+                                  onPressed: () {
+                                    showPickerBlocks(context);
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30.0)),
+                                  child: Text(
+                                    "${block}",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )
                               : Container(),
                           selectedItem < 3
                               ? RaisedButton(
-                            color: flower == "Tipo de flor"
-                                ? Colors.grey
-                                : Color(0xff85a335),
-                            onPressed: () async {
-                              await showPickerFlowers(context);
-                            },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Text(
-                              "${flower}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )
+                                  color: flower == "Tipo de flor"
+                                      ? Colors.grey
+                                      : Color(0xff85a335),
+                                  onPressed: () async {
+                                    await showPickerFlowers(context);
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(30.0)),
+                                  child: Text(
+                                    "${flower}",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )
                               : Container(),
-
                         ],
                       ),
                       varieties.length > 0
                           ? RaisedButton(
-                        color: selectedVariety == "Variedad"
-                            ? Colors.grey
-                            : Color(0xff85a335),
-                        onPressed: () async {
-                          await showPickerVarieties(context);
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0)),
-                        child: Text(
-                          "${selectedVariety}",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
+                              color: selectedVariety == "Variedad"
+                                  ? Colors.grey
+                                  : Color(0xff85a335),
+                              onPressed: () async {
+                                await showPickerVarieties(context);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0)),
+                              child: Text(
+                                "${selectedVariety}",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
                           : Container()
                     ],
                   ),
@@ -574,32 +575,28 @@ class _HistoryPage extends State<HistoryPage>
         body: {"id": "${labor.id}", "user_id": "1"});
   }
 
-  showDialogMuestra(int muestra)  async{
+  showDialogMuestra(int muestra) async {
     SelectedTypes = [];
     subtypesArray = [];
 
-
     muestrasModel result = await Navigator.push(
       context,
-
-      MaterialPageRoute(builder: (context) => SelectTipoMuestra(
-      flower: flower,
-        muestra: muestra,
-        muestrasArray: muestrasArray[muestra],
-        sede_id: sede_id,
-        selectedItem: selectedItem,
-        subControl: subControl,
-        typesArray: typesArray,
-      )),
+      MaterialPageRoute(
+          builder: (context) => SelectTipoMuestra(
+                flower: flower,
+                muestra: muestra,
+                muestrasArray: muestrasArray[muestra],
+                sede_id: sede_id,
+                selectedItem: selectedItem,
+                subControl: subControl,
+                typesArray: typesArray,
+              )),
     );
 
-    if(result!=null){
-      muestrasArray[muestra]=result;
+    if (result != null) {
+      muestrasArray[muestra] = result;
       print("aqui este es el resultado ${muestrasArray}");
     }
-
-
-
   }
 
   List<Widget> showItemsControl() {
@@ -683,15 +680,15 @@ class _HistoryPage extends State<HistoryPage>
     return muestras;
   }
 
-  formatMuestrasArray(List<muestrasModel> muestras){
-    List<muestrasModel> muestrasString=[];
+  formatMuestrasArray(List<muestrasModel> muestras) {
+    List<muestrasModel> muestrasString = [];
 
     muestras.forEach((element) {
-      List<String> tipos=[];
+      List<String> tipos = [];
       element.subtypes.forEach((elements) {
         tipos.add("${elements.tipo} - ${elements.desplegable}");
       });
-      element.subtypesString=tipos;
+      element.subtypesString = tipos;
 
       muestrasString.add(element);
     });
@@ -765,7 +762,8 @@ class _HistoryPage extends State<HistoryPage>
                   onPressed: () {
                     Labor labor = Labor();
                     labor.comments = jsonEncode(selectedComments);
-                labor.muestras = jsonEncode(formatMuestrasArray(muestrasArray));
+                    labor.muestras =
+                        jsonEncode(formatMuestrasArray(muestrasArray));
                     labor.flowerType = flower;
                     labor.blocks = block;
                     labor.asegurator = _selectedAsegurador;
@@ -777,7 +775,7 @@ class _HistoryPage extends State<HistoryPage>
                     labor.subProcess = subControl;
                     labor.date = DateTime.now().toString();
 
-                 sqfly<LaborDao>().create(labor); // insertAll
+                    sqfly<LaborDao>().create(labor); // insertAll
 
                     getAllLabores();
 
@@ -875,7 +873,7 @@ class _HistoryPage extends State<HistoryPage>
                             }
                           });
                           gonext();
-                         /* if (canNext == 0) {
+                          /* if (canNext == 0) {
                             gonext();
                           } else {
                             Toast.show(
@@ -946,14 +944,10 @@ class _HistoryPage extends State<HistoryPage>
     );
   }
 
-
-  Widget parseSubType(subtypes){
-
-   /// var subtypesJson= jsonDecode(subtypes);
+  Widget parseSubType(subtypes) {
+    /// var subtypesJson= jsonDecode(subtypes);
     print("estos son los subtypes ${subtypes}");
-    return Text("${subtypes}",style: TextStyle(
-        fontSize:
-        16));
+    return Text("${subtypes}", style: TextStyle(fontSize: 16));
   }
 
   Widget StepTwo() {
@@ -1065,7 +1059,6 @@ class _HistoryPage extends State<HistoryPage>
                           ),
                         ),
                         Container(
-
                           child: AutoSizeText("Recepción de flores",
                               minFontSize: 14,
                               maxLines: 4,
@@ -1439,9 +1432,11 @@ class _HistoryPage extends State<HistoryPage>
                                                                     .start,
                                                             children: [
                                                               Container(
-                                                                child: AutoSizeText(
+                                                                child:
+                                                                    AutoSizeText(
                                                                   "Labor: ${getLabor(labores[index])} ",
-                                                                  minFontSize: 14,
+                                                                  minFontSize:
+                                                                      14,
                                                                   maxLines: 4,
                                                                   style: TextStyle(
                                                                       fontWeight:
@@ -1493,9 +1488,7 @@ class _HistoryPage extends State<HistoryPage>
                                                     ),
                                                   ),
                                                   onTap: () async {
-
-                                                    print(labores[index]
-                                                        );
+                                                    print(labores[index]);
                                                     var muestraDecode =
                                                         jsonDecode(
                                                             labores[index]
@@ -1726,7 +1719,8 @@ class _HistoryPage extends State<HistoryPage>
                                                                           fontSize:
                                                                               16)),
                                                                   Container(
-                                                                    child: parseSubType(subtypes),
+                                                                    child: parseSubType(
+                                                                        subtypes),
                                                                     margin: EdgeInsets
                                                                         .only(
                                                                             top:
@@ -1884,7 +1878,6 @@ class _HistoryPage extends State<HistoryPage>
         Flowers flowerItem = await sqfly<FlowerDao>()
             .findBy({'name': '${flower}', 'sede_id': sede_id});
 
-
         controls = await sqfly<ControlDao>().where({
           'process_id': selectedItem,
           'sede_id': sede_id,
@@ -1892,7 +1885,6 @@ class _HistoryPage extends State<HistoryPage>
         }).toList();
 
         print("eyyyy aquiiii ${selectedItem}  ${sede_id}  ${flowerItem.id}");
-
       } else {
         controls = await sqfly<ControlDao>()
             .where({'process_id': selectedItem, 'sede_id': sede_id}).toList();
@@ -1935,7 +1927,7 @@ class _HistoryPage extends State<HistoryPage>
 
   getAllComments() async {
     setState(() {
-      commentsArray=[];
+      commentsArray = [];
     });
     List<Comments> comments = await sqfly<CommentDao>()
         .where({'process_id': '${selectedItem}'}).toList();
@@ -1948,7 +1940,7 @@ class _HistoryPage extends State<HistoryPage>
 
   findLaboresByProcess() async {
     setState(() {
-      actualLabores=[];
+      actualLabores = [];
     });
     List<Labor> labor =
         await sqfly<LaborDao>().where({'process': '${selectedItem}'}).toList();
@@ -1974,15 +1966,16 @@ class _HistoryPage extends State<HistoryPage>
 
   getAllEmploys() async {
     setState(() {
-      suggestionsSupervisor=[];
-      suggestions=[];
+      suggestionsSupervisor = [];
+      suggestions = [];
     });
-    List<Employs> emplo = await sqfly<EmployeeDao>().where({"sede_id": sede_id}).toList();
+    List<Employs> emplo =
+        await sqfly<EmployeeDao>().where({"sede_id": sede_id}).toList();
     emplo.forEach((element) {
       suggestions.add(element.name);
     });
-    List<Employs> supervisors =
-        await sqfly<EmployeeDao>().where({"type": "Supervisor","sede_id": sede_id}).toList();
+    List<Employs> supervisors = await sqfly<EmployeeDao>()
+        .where({"type": "Supervisor", "sede_id": sede_id}).toList();
     supervisors.forEach((element) {
       suggestionsSupervisor.add(element.name);
     });
