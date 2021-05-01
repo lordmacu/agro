@@ -486,6 +486,69 @@ class _HistoryPage extends State<HistoryPage>
                   color: Color(0xffFFB74D),
                   onPressed: () {
 
+                    if(_selectedSupervisor==null){
+
+                      Alert(
+                        context: context,
+                        type: AlertType.error,
+                        title: "Ingresar Supervisor",
+                        desc: "Por favor ingresar el supervisor",
+                        buttons: [
+                          DialogButton(
+                            child: Text(
+                              "Aceptar",
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                            width: 120,
+                          )
+                        ],
+                      ).show();
+                      return ;
+                    }
+
+                    if(_selectedColaborador==null){
+                      Alert(
+                        context: context,
+                        type: AlertType.error,
+                        title: "Ingresar Colaborador",
+                        desc: "Por favor ingresar el Colaborador",
+                        buttons: [
+                          DialogButton(
+                            child: Text(
+                              "Aceptar",
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                            width: 120,
+                          )
+                        ],
+                      ).show();
+                      return ;
+                    }
+
+
+                    if(_selectedAsegurador==null){
+                      Alert(
+                        context: context,
+                        type: AlertType.error,
+                        title: "Ingresar Asegurador",
+                        desc: "Por favor ingresar el Asegurador",
+                        buttons: [
+                          DialogButton(
+                            child: Text(
+                              "Aceptar",
+                              style: TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                            width: 120,
+                          )
+                        ],
+                      ).show();
+                      return ;
+                    }
+
+
                     print("asdfasdf asd ${selectedItem}");
                     if (selectedItem == 6) {
                       if (this._formKey.currentState.validate()) {
@@ -907,7 +970,8 @@ class _HistoryPage extends State<HistoryPage>
                         color: Color(0xffFFB74D),
                         onPressed: () {
 
-                          print("asdfasdf");
+
+
 
                           if(muestrasCount>0){
                             Labor labor = Labor();
