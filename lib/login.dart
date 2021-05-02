@@ -1,6 +1,7 @@
 import 'package:agrotest/history.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -225,7 +226,7 @@ class _LoginPage extends State<LoginPage> {
                                                     shape: RoundedRectangleBorder(
                                                         borderRadius:
                                                         BorderRadius.circular(30.0)),
-                                                    onPressed: () {
+                                                    onPressed: ()  async{
                                                       int sede=0;
 
                                                       bool canPass=false;
@@ -243,6 +244,12 @@ class _LoginPage extends State<LoginPage> {
                                                         }else{
                                                           sede=1;
                                                         }
+
+
+                                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                        prefs.setInt("sede",sede );
+                                                        prefs.setString("usuario",emailController.text );
+
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(builder: (context) => HistoryPage(sede: sede)),

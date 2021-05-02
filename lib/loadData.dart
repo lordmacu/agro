@@ -9,6 +9,7 @@ import 'package:agrotest/daos/LaborDao.dart';
 import 'package:agrotest/daos/ProcesesDao.dart';
 import 'package:agrotest/daos/SedesDao.dart';
 import 'package:agrotest/daos/VaritiesDao.dart';
+import 'package:agrotest/history.dart';
 import 'package:agrotest/login.dart';
 import 'package:agrotest/mock.dart';
 import 'package:agrotest/models/Comments.dart';
@@ -66,16 +67,26 @@ class _LoadDataPagePage extends State<LoadDataPage> {
 
   checkCreation() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isLoadedTables = await prefs.getBool("loadGDddddddedfdfddneddradl1sd");
-    _onLoading();
-    if (isLoadedTables == null) {
-      loadData();
-    } else {
+
+    int sede=prefs.getInt("sede");
+    if(sede!=null){
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => HistoryPage(sede: sede)),
       );
+    }else{
+      bool isLoadedTables = await prefs.getBool("loadGDddddddedfdfddneddradl1sd");
+      _onLoading();
+      if (isLoadedTables == null) {
+        loadData();
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
     }
+
   }
 
   void _onLoading() {
