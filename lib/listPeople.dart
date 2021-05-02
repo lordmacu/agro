@@ -30,6 +30,9 @@ class _ListPeople extends State<ListPeople> {
     setState(() {
       savedListPeopleArray=widget.listPeopleArray;
     });
+
+
+    print("aqui esta la lista de cosas   ${widget.listPeopleArray}");
   }
 
   @override

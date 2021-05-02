@@ -54,7 +54,7 @@ class _muestraDialogState extends State<muestraDialog> {
   bool isLoaded = false;
 
   bool addNewTipo = false;
-  bool addMoreTypes=true;
+  bool addMoreTypes = true;
   var sqfly = null;
   List<TipoMuestra> muestras = [];
 
@@ -62,7 +62,6 @@ class _muestraDialogState extends State<muestraDialog> {
     if (index != 0) {
       isLoaded = false;
       List<String> subtypesArrayLocal = [];
-
 
       print("aquii selected item    ${widget.selectedItem}");
 
@@ -94,9 +93,8 @@ class _muestraDialogState extends State<muestraDialog> {
       }
 
       if (subtypesArrayLocal.length == 0) {
-
-        if(muestras.length>0){
-          if(muestras[0].tipo!="Ramo conforme"){
+        if (muestras.length > 0) {
+          if (muestras[0].tipo != "Ramo conforme") {
             setState(() {
               addNewTipo = false;
             });
@@ -110,8 +108,6 @@ class _muestraDialogState extends State<muestraDialog> {
             muestras.add(tipo);
           }
         }
-
-
       }
 
       print("aquii ${addNewTipo}  ${subtypesArrayLocal.length}");
@@ -142,12 +138,9 @@ class _muestraDialogState extends State<muestraDialog> {
 
     muestras = widget.subTypesString;
 
-
-
-
-    if(muestras.length>0){
+    if (muestras.length > 0) {
       setState(() {
-        addMoreTypes=false;
+        //  addMoreTypes=false;
       });
     }
 
@@ -170,15 +163,35 @@ class _muestraDialogState extends State<muestraDialog> {
     }
   }
 
+  filterarrayTypes(muestra) {
+    for (var m = 0; m < muestras.length; m++) {
+      if (muestras[m].tipo == muestra) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   addTipoMuestra() async {
     setState(() {
       isLoaded = false;
     });
+
+    List<String> listToArray = [];
+    for (var m = 0; m < widget.typesArray.length; m++) {
+      bool ExistType = filterarrayTypes(widget.typesArray[m]);
+
+      if (!ExistType) {
+        listToArray.add(widget.typesArray[m]);
+      }
+    }
+
     final result = await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
       MaterialPageRoute(
-          builder: (context) => ListPeople(listPeopleArray: widget.typesArray)),
+          builder: (context) => ListPeople(listPeopleArray: listToArray)),
     );
 
     if (result != null) {
@@ -222,16 +235,14 @@ class _muestraDialogState extends State<muestraDialog> {
           color: Color(0xffFFB74D),
           onPressed: this._selectedSupervisor != null
               ? () {
+                  if (this._selectedSupervisor == "Ramo conforme") {
+                    TipoMuestra tipo = TipoMuestra();
+                    tipo.desplegable = null;
+                    tipo.tipo = "Ramo conforme";
+                    muestras.add(tipo);
+                  }
 
-            if(this._selectedSupervisor=="Ramo conforme"){
-              TipoMuestra tipo = TipoMuestra();
-              tipo.desplegable =
-                  null;
-              tipo.tipo = "Ramo conforme";
-              muestras.add(tipo);
-            }
-
-                widget.exportSubtypes(muestras, this._selectedSupervisor);
+                  widget.exportSubtypes(muestras, this._selectedSupervisor);
                 }
               : null,
           child: Text(
@@ -254,10 +265,8 @@ class _muestraDialogState extends State<muestraDialog> {
                             child: ListView.builder(
                                 itemCount: muestras.length,
                                 itemBuilder: (BuildContext ctxt, int index) {
-
-                                  if(muestras[index].tipo=="Ramo conforme"){
-                                    addMoreTypes=false;
-
+                                  if (muestras[index].tipo == "Ramo conforme") {
+                                    addMoreTypes = false;
                                   }
                                   return Container(
                                     margin: EdgeInsets.only(bottom: 10),
@@ -272,39 +281,56 @@ class _muestraDialogState extends State<muestraDialog> {
                                           children: [
                                             Expanded(
                                                 child: Text(
-                                              "${muestras[index].tipo} - ${muestras[index].desplegable}",
+                                              "${muestras[index].tipo} - ${(muestras[index].desplegable != null ? muestras[index].desplegable : "")}",
                                               style: TextStyle(fontSize: 18),
                                             )),
-
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  muestras.removeAt(index);
+                                                });
+                                              },
+                                              child: Container(
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.redAccent,
+                                                ),
+                                              ),
+                                            )
                                           ],
                                         ),
                                       ),
                                     ),
                                   );
                                 })),
-                        addMoreTypes? Container(
-                          margin: EdgeInsets.only(bottom: 20, top: 0),
-                          child: Container(
-                            child: RaisedButton(
-                              color: Color(0xff85a335),
-                              onPressed: () {
-                                setState(() {
-                                  addNewTipo = !addNewTipo;
-                                  subtypesArray = [];
-                                  this._selectedSupervisor = null;
-                                });
+                        addMoreTypes
+                            ? Container(
+                                margin: EdgeInsets.only(bottom: 20, top: 0),
+                                child: Container(
+                                  child: RaisedButton(
+                                    color: Color(0xff85a335),
+                                    onPressed: () {
+                                      setState(() {
+                                        addNewTipo = !addNewTipo;
+                                        subtypesArray = [];
+                                        this._selectedSupervisor = null;
+                                      });
 
-                                addTipoMuestra();
-                              },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0)),
-                              child: Text(
-                                "Agregar tipo de muestra",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ): Container()
+                                      addTipoMuestra();
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0)),
+                                    child: Text(
+                                      "Agregar tipo de muestra",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container()
                       ],
                     ),
                   ))
