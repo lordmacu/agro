@@ -1,5 +1,6 @@
 import 'package:agrotest/history.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -24,6 +25,7 @@ class _LoginPage extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible;
   TextEditingController emailController;
+  TextEditingController passwordController;
 
   void _incrementCounter() {
     setState(() {
@@ -40,6 +42,7 @@ class _LoginPage extends State<LoginPage> {
   void initState() {
     _passwordVisible = false;
     emailController= TextEditingController();
+    passwordController= TextEditingController();
 
   }
 
@@ -159,6 +162,8 @@ class _LoginPage extends State<LoginPage> {
                                         Container(
                                           margin: EdgeInsets.only(top: 20),
                                           child: TextFormField(
+                                            controller: passwordController,
+
                                             obscureText: !_passwordVisible,
                                             //This will obscure text dynamically
                                             autofocus: false,
@@ -222,15 +227,45 @@ class _LoginPage extends State<LoginPage> {
                                                         BorderRadius.circular(30.0)),
                                                     onPressed: () {
                                                       int sede=0;
-                                                      if(emailController.text=="fe@calidad.com"){
-                                                        sede=2;
-                                                      }else{
-                                                        sede=1;
+
+                                                      bool canPass=false;
+                                                      if(emailController.text=="fe@calidad.com" && passwordController.text=="CalidadFe-123"){
+                                                        canPass=true;
                                                       }
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(builder: (context) => HistoryPage(sede: sede)),
-                                                      );
+
+                                                      if(emailController.text=="ol@calidad.com" && passwordController.text=="CalidadOl-123"){
+                                                        canPass=true;
+                                                      }
+
+                                                      if(canPass){
+                                                        if(emailController.text=="fe@calidad.com"){
+                                                          sede=2;
+                                                        }else{
+                                                          sede=1;
+                                                        }
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(builder: (context) => HistoryPage(sede: sede)),
+                                                        );
+                                                      }else{
+                                                        Alert(
+                                                          context: context,
+                                                          type: AlertType.error,
+                                                          title: "Hay  un error",
+                                                          desc: "Verifique la contraseña y usuario",
+                                                          buttons: [
+                                                            DialogButton(
+                                                              child: Text(
+                                                                "Aceptar",
+                                                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                                              ),
+                                                              onPressed: () => Navigator.pop(context),
+                                                              width: 120,
+                                                            )
+                                                          ],
+                                                        ).show();
+                                                      }
+
                                                     },
                                                     child: Container(
                                                       padding: EdgeInsets.only(top: 15,bottom: 15),
