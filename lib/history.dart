@@ -565,11 +565,9 @@ class _HistoryPage extends State<HistoryPage>
                     } else {
                       if (flower != "Tipo de flor") {
                         if (selectedVariety != 'Variedad') {
-                          if(block!='Bloque'){
-                            if (this._formKey.currentState.validate()) {
-                              this._formKey.currentState.save();
-                              gonext();
-                            }
+                          if (this._formKey.currentState.validate()) {
+                            this._formKey.currentState.save();
+                            gonext();
                           }
 
                         }

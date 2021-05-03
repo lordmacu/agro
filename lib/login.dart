@@ -229,17 +229,20 @@ class _LoginPage extends State<LoginPage> {
                                                     onPressed: ()  async{
                                                       int sede=0;
 
+                                                      String user= emailController.text.trim();
+                                                      String password= passwordController.text.trim();
+
                                                       bool canPass=false;
-                                                      if(emailController.text=="fe@calidad.com" && passwordController.text=="CalidadFe-123"){
+                                                      if(user=="fe@calidad.com" && password=="CalidadFe-123"){
                                                         canPass=true;
                                                       }
 
-                                                      if(emailController.text=="ol@calidad.com" && passwordController.text=="CalidadOl-123"){
+                                                      if(user=="ol@calidad.com" && password=="CalidadOl-123"){
                                                         canPass=true;
                                                       }
 
                                                       if(canPass){
-                                                        if(emailController.text=="fe@calidad.com"){
+                                                        if(user=="fe@calidad.com"){
                                                           sede=2;
                                                         }else{
                                                           sede=1;
@@ -248,7 +251,7 @@ class _LoginPage extends State<LoginPage> {
 
                                                         SharedPreferences prefs = await SharedPreferences.getInstance();
                                                         prefs.setInt("sede",sede );
-                                                        prefs.setString("usuario",emailController.text );
+                                                        prefs.setString("usuario",user );
 
                                                         Navigator.push(
                                                           context,
