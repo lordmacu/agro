@@ -136,6 +136,8 @@ class _muestraDialogState extends State<muestraDialog> {
     super.initState();
     this._typeTextEdition.text = "${widget.selectedType}";
 
+    print("aquiii estoy  depronto  ${widget.selectedType}   ${widget.selectedValue}");
+
     muestras = widget.subTypesString;
 
     if (muestras.length > 0) {
@@ -223,6 +225,27 @@ class _muestraDialogState extends State<muestraDialog> {
       });
     }
   }
+
+  bool checkSelectedDesplegable( List<TipoMuestra> all, actual){
+    bool isInActual=false;
+    for(var i =0; i<all.length; i++){
+      if(all[i].desplegable==actual){
+        isInActual=true;
+      }
+    }
+    return isInActual;
+  }
+
+  int getIndexSelectedDesplegable( List<TipoMuestra> all, actual){
+    int index=0;
+    for(var i =0; i<all.length; i++){
+      if(all[i].desplegable==actual){
+        index=i;;
+      }
+    }
+    return index;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -369,11 +392,16 @@ class _muestraDialogState extends State<muestraDialog> {
                                           top: 5,
                                           bottom: 5),
                                       child: RaisedButton(
-                                        color: selectedDesplegable ==
-                                                subtypesArray[index]
+                                        color: checkSelectedDesplegable(muestras,subtypesArray[index])
                                             ? Color(0xff85a335)
                                             : Colors.white,
                                         onPressed: () {
+
+                                          if(!checkSelectedDesplegable(muestras,subtypesArray[index])){
+
+
+
+
                                           setState(() {
                                             selectedDesplegable =
                                                 subtypesArray[index];
@@ -390,11 +418,45 @@ class _muestraDialogState extends State<muestraDialog> {
                                           tipo.desplegable =
                                               selectedDesplegable;
                                           tipo.tipo = _typeTextEdition.text;
-                                          muestras.add(tipo);
 
                                           setState(() {
-                                            addNewTipo = false;
+                                          //
+
+                                            bool isMultiple=false;
+                                            if(this._selectedSupervisor=="Fitosanidad (Plagas)"){
+                                              isMultiple=true;
+
+                                            }
+
+                                            if(this._selectedSupervisor=="Fitosanidad (Enfermedades)"){
+                                              isMultiple=true;
+
+                                            }
+
+                                            if(this._selectedSupervisor=="Presentación del ramo"){
+                                              isMultiple=true;
+
+                                            }
+
+                                            if(this._selectedSupervisor=="Follaje"){
+                                              isMultiple=true;
+
+                                            }
+
+                                            if(!isMultiple){
+                                              addNewTipo = false;
+                                            }
+
+                                            muestras.add(tipo);
                                           });
+                                          print("sdfasf  asd    ${muestras}");
+                                          }else{
+                                            int indexType=getIndexSelectedDesplegable(muestras,subtypesArray[index]);
+
+                                            setState(() {
+                                              muestras.removeAt(indexType);
+                                            });
+                                          }
                                         },
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
@@ -406,8 +468,7 @@ class _muestraDialogState extends State<muestraDialog> {
                                             subtypesArray[index],
                                             style: TextStyle(
                                                 fontSize: 17,
-                                                color: selectedDesplegable ==
-                                                        subtypesArray[index]
+                                                color: checkSelectedDesplegable(muestras,subtypesArray[index])
                                                     ? Colors.white
                                                     : Color(0xff85a335)),
                                           ),
