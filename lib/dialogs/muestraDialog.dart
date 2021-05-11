@@ -65,21 +65,44 @@ class _muestraDialogState extends State<muestraDialog> {
 
       print("aquii selected item    ${widget.selectedItem}");
 
-      if (widget.selectedItem == 4) {
-        List<Dropdown> controls = await sqfly<DropdownDao>().where({
+      if (widget.selectedItem == 4 || widget.selectedItem == 6) {
+        List<Dropdown> controls=[];
+        if(widget.selectedItem == 4 ){
+
+
+         controls = await sqfly<DropdownDao>().where({
           'name': '${name}',
           'sede_id': widget.sede_id,
 
           //  'flower_id': flower.id,
           'process_id': widget.subControl
         }).toList();
+        }
+
+
+        if(widget.selectedItem == 6 ){
+
+
+         controls = await sqfly<DropdownDao>().where({
+            'name': '${name}',
+            'sede_id': widget.sede_id,
+          }).toList();
+        }
+
+
+        print("aquii mano ${widget.subControl}");
 
         controls.forEach((element) {
           subtypesArrayLocal.add(element.desplegable);
         });
       } else {
+
+
         Flowers flower = await sqfly<FlowerDao>()
             .findBy({'name': '${widget.flower}', 'sede_id': widget.sede_id});
+
+
+
         List<Dropdown> control = await sqfly<DropdownDao>().where({
           'name': '${name}',
           'sede_id': widget.sede_id,

@@ -628,7 +628,7 @@ class _HistoryPage extends State<HistoryPage>
     List<Labor> labores = await sqfly<LaborDao>().where({"state": 0}).toList();
 
     var getEmployee = await client.post(Uri.parse('${url}/saveData'),
-        body: {"data": jsonEncode(labores)});
+        body: {"data": jsonEncode(labores),"sede_id":"${sede_id}"});
 
     labores.forEach((element) async {
       sqfly<LaborDao>().updateLabor(element.id);
