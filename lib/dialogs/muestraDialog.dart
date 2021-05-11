@@ -288,7 +288,8 @@ class _muestraDialogState extends State<muestraDialog> {
                     muestras.add(tipo);
                   }
 
-                  widget.exportSubtypes(muestras, this._selectedSupervisor);
+
+                 widget.exportSubtypes(muestras, this._selectedSupervisor);
                 }
               : null,
           child: Text(

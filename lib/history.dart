@@ -976,9 +976,13 @@ class _HistoryPage extends State<HistoryPage>
 
 
                           if(muestrasCount>0){
-                            Labor labor = Labor();
+
+
+
+
+                          Labor labor = Labor();
                             labor.comments = jsonEncode(selectedComments);
-                            labor.muestras = jsonEncode(muestrasArray);
+                            labor.muestras = jsonEncode(formatMuestrasArray(muestrasArray));
                             labor.flowerType = flower;
                             labor.blocks = block;
                             labor.asegurator = _selectedAsegurador;

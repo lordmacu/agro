@@ -52,7 +52,6 @@ class _SelectTipoMuestra extends State<SelectTipoMuestra> {
 
 
 
-
               setState(() {
                 widget.muestrasArray.name = "Muestra ${widget.muestra}";
                 if(muestras.length>0){
@@ -64,7 +63,10 @@ class _SelectTipoMuestra extends State<SelectTipoMuestra> {
                 }
 
               });
-               Navigator.pop(context, widget.muestrasArray);
+
+          //    print("aqui estan las muestras   ${widget.muestrasArray}");
+
+              Navigator.pop(context, widget.muestrasArray);
             },
           ),
         )
