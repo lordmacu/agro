@@ -59,7 +59,8 @@ class _muestraDialogState extends State<muestraDialog> {
   List<TipoMuestra> muestras = [];
 
   getAllSubtypesByType(name, index) async {
-    if (index != 0) {
+
+
       isLoaded = false;
       List<String> subtypesArrayLocal = [];
 
@@ -122,18 +123,29 @@ class _muestraDialogState extends State<muestraDialog> {
               addNewTipo = false;
             });
 
-            if (this._selectedSupervisor == null) {
+           /* if (this._selectedSupervisor == null) {
               this._selectedSupervisor = "Ramo conforme";
             }
             TipoMuestra tipo = TipoMuestra();
             tipo.desplegable = "";
             tipo.tipo = this._selectedSupervisor;
-            muestras.add(tipo);
+            muestras.add(tipo);*/
           }
+        }else{
+
+
         }
+
+        if(this._selectedSupervisor!=null){
+          TipoMuestra tipo = TipoMuestra();
+          tipo.desplegable = "";
+          tipo.tipo = this._selectedSupervisor;
+          muestras.add(tipo);
+        }
+
       }
 
-      print("aquii ${addNewTipo}  ${subtypesArrayLocal.length}");
+      print("aquii ${addNewTipo}  ${subtypesArrayLocal.length} y este el tamaño de las muestras ${muestras}  ${this._selectedSupervisor}");
 
       setState(() {
         subtypesArray = subtypesArrayLocal;
@@ -147,7 +159,7 @@ class _muestraDialogState extends State<muestraDialog> {
           }
         }
       }
-    }
+
   }
 
   final TextEditingController _typeTextEdition = TextEditingController();
@@ -219,6 +231,8 @@ class _muestraDialogState extends State<muestraDialog> {
           builder: (context) => ListPeople(listPeopleArray: listToArray)),
     );
 
+    print("este es el resultado de listad   ${result}");
+
     if (result != null) {
       setState(() {
         isLoaded = true;
@@ -281,12 +295,12 @@ class _muestraDialogState extends State<muestraDialog> {
           color: Color(0xffFFB74D),
           onPressed: this._selectedSupervisor != null
               ? () {
-                  if (this._selectedSupervisor == "Ramo conforme") {
+                /*  if (this._selectedSupervisor == "Ramo conforme") {
                     TipoMuestra tipo = TipoMuestra();
                     tipo.desplegable = null;
                     tipo.tipo = "Ramo conforme";
                     muestras.add(tipo);
-                  }
+                  }*/
 
 
                  widget.exportSubtypes(muestras, this._selectedSupervisor);
