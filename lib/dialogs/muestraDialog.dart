@@ -434,8 +434,19 @@ class _muestraDialogState extends State<muestraDialog> {
                                             ? Color(0xff85a335)
                                             : Colors.white,
                                         onPressed: () {
+                                         /*- this.flower,
+                                          this.sede_id,
+                                          this.subControl,
+                                          this.selectedItem,
+                                          this.typesArray,
+                                          this.exportSubtypes,
+                                          this.selectedType,
+                                          this.subTypesString,
+                                          this.selectedValue*/
+                                          print("aqui el subtipe ${muestras}");
 
-                                          if(!checkSelectedDesplegable(muestras,subtypesArray[index])){
+
+                                        if(!checkSelectedDesplegable(muestras,subtypesArray[index])){
 
 
 
@@ -457,10 +468,10 @@ class _muestraDialogState extends State<muestraDialog> {
                                               selectedDesplegable;
                                           tipo.tipo = _typeTextEdition.text;
 
-                                          setState(() {
+                                        setState(() {
                                           //
 
-                                            bool isMultiple=false;
+                                            bool isMultiple=true;
                                             if(this._selectedSupervisor=="Fitosanidad (Plagas)"){
                                               isMultiple=true;
 

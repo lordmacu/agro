@@ -674,7 +674,7 @@ class _HistoryPage extends State<HistoryPage>
   List<Widget> showItemsControl() {
     List<Widget> muestras = [];
 
-    for (var i = 0; i < muestrasCount; i++) {
+    for (var i = 0; i < muestrasArray.length; i++) {
       muestras.add(GestureDetector(
         onTap: () {
           this._typeTextEdition.text = "";
@@ -711,7 +711,50 @@ class _HistoryPage extends State<HistoryPage>
                           )
                         : null,
                   )
-                : null
+                : null,
+            GestureDetector(
+              onTap: (){
+
+                Alert(
+                  context: context,
+                  type: AlertType.warning,
+                  title: "Borrar muestra",
+                  desc: "¿Estás seguro de borrar esta muestra?",
+                  buttons: [
+                    DialogButton(
+                      child: Text(
+                        "Si",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          muestrasArray.removeAt(i);
+                        });
+                        Navigator.pop(context);
+                      },
+                      color: Colors.redAccent,
+                    ),
+                    DialogButton(
+                      child: Text(
+                        "No",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+
+                    )
+                  ],
+                ).show();
+
+
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                ),
+                child: Icon(Icons.delete,color: Colors.white,),
+              ),
+            )
           ],
         ),
       ));
@@ -833,7 +876,7 @@ class _HistoryPage extends State<HistoryPage>
                   color: Color(0xffFFB74D),
                   onPressed: () {
 
-                   if(muestrasCount>0){
+                   if(muestrasArray.length>0){
                       Labor labor = Labor();
                       labor.comments = jsonEncode(selectedComments);
                       labor.muestras =
@@ -975,7 +1018,7 @@ class _HistoryPage extends State<HistoryPage>
 
 
 
-                          if(muestrasCount>0){
+                          if(muestrasArray.length>0){
 
 
 
