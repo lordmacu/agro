@@ -9,6 +9,7 @@ import 'package:agrotest/daos/VaritiesDao.dart';
 import 'package:agrotest/dialogs/muestraDialog.dart';
 import 'package:agrotest/helpers.dart';
 import 'package:agrotest/listPeople.dart';
+import 'package:agrotest/loadDataSecond.dart';
 import 'package:agrotest/models/Comments.dart';
 import 'package:agrotest/models/Controls.dart';
 import 'package:agrotest/models/Employs.dart';
@@ -625,10 +626,31 @@ class _HistoryPage extends State<HistoryPage>
   loadDataServer() async {
     var client = http.Client();
 
-    List<Labor> labores = await sqfly<LaborDao>().where({"state": 0}).toList();
+    List<Labor> labores = await sqfly<LaborDao>()
+        .where({"state": 0})
+        .toList();
 
     var getEmployee = await client.post(Uri.parse('${url}/saveData'),
         body: {"data": jsonEncode(labores),"sede_id":"${sede_id}"});
+
+    labores.forEach((element) async {
+      sqfly<LaborDao>().updateLabor(element.id);
+    });
+
+    print("esta es la cantidad ${labores}");
+    getAllLabores();
+  }
+
+  uploadDataServer() async {
+    var client = http.Client();
+
+    List<Labor> labores = await sqfly<LaborDao>()
+    //.where({"state": 0})
+        .toList();
+
+    var getEmployee = await client.post(Uri.parse('${url}/saveData'),
+        body: {"data": jsonEncode(labores),"sede_id":"${sede_id}"});
+
 
     labores.forEach((element) async {
       sqfly<LaborDao>().updateLabor(element.id);
@@ -1392,6 +1414,15 @@ class _HistoryPage extends State<HistoryPage>
     }
   }
 
+  downloadAndActualice() async{
+    final result = await Navigator.push(
+      context,
+      // Create the SelectionScreen in the next step.
+      MaterialPageRoute(
+          builder: (context) => LoadDataSecondPage(sede: sede_id,)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -1467,6 +1498,45 @@ class _HistoryPage extends State<HistoryPage>
                               ),
                               top: 35,
                               left: 20,
+                            ),
+                            Positioned(
+                              child: Material(
+                                color: Color(0xff85a335),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0)),
+                                child: InkWell(
+                                  child: Icon(
+                                    Icons.download_outlined,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                  onTap: () {
+                                    downloadAndActualice();
+                                  },
+                                ),
+                              ),
+                              top: 35,
+                              left: 60,
+                            ),
+
+                            Positioned(
+                              child: Material(
+                                color: Color(0xff85a335),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0)),
+                                child: InkWell(
+                                  child: Icon(
+                                    Icons.upload_outlined,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                  onTap: () {
+                                    uploadDataServer();
+                                  },
+                                ),
+                              ),
+                              top: 35,
+                              right: 20,
                             ),
                           ],
                         )),
